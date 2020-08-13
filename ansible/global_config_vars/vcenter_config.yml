@@ -1,4 +1,13 @@
 ---
+# ------------------------------------------
+# file: global_config_vars/vcenter_config.yml
+# ver: 1.0
+# ansible ver: 2.7.8
+# python ver: 2.7.15
+# author: Pradeep Singh
+# description: Vmware vCenter Config Variables
+# ------------------------------------------
+
 
 # vmware vCenter server config
 vcenter:

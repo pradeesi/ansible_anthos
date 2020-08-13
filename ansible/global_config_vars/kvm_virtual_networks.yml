@@ -1,8 +1,18 @@
 ---
+# ------------------------------------------
+# file: global_config_vars/kvm_virtual_networks.yml
+# ver: 1.0
+# ansible ver: 2.7.8
+# python ver: 2.7.15
+# author: Pradeep Singh
+# description: KVM Virtual Switch Configurations
+# ------------------------------------------
+
 
 kvm_networks:
   - kvm_host: 192.168.1.114
     virtual_networks:
+
       - network_name: pxe_network
         action: create
         mode: route
@@ -15,31 +25,11 @@ kvm_networks:
         dhcp_range_end: 192.168.2.254
         pxe_boot_network: true    #set as true if you want to enable pxe boot on this netwrok
 
-      - network_name: vmware_internal_mgmt_nw
+      - network_name: anthos_nw
         action: create
         mode: route
         forwarding_host_device: enp0s20f0u2     # Use ifconfig or ip addr command to find the physical interface on KVM host
         bridge_name: virbr2
-        ip_address: 172.16.5.1
+        ip_address: 172.16.1.1
         net_mask: 255.255.255.0
         enable_dhcp_server: false
-
-      - network_name: vmware_external_vm_nw
-        action: create
-        mode: route
-        forwarding_host_device: enp0s20f0u2     # Use ifconfig or ip addr command to find the physical interface on KVM host
-        bridge_name: virbr3
-        ip_address: 172.16.10.1
-        net_mask: 255.255.255.0
-        enable_dhcp_server: false
-
-      - network_name: vmware_internal_vm_nw
-        action: create
-        mode: route
-        forwarding_host_device: enp0s20f0u2     # Use ifconfig or ip addr command to find the physical interface on KVM host
-        bridge_name: virbr4
-        ip_address: 172.16.20.1
-        net_mask: 255.255.255.0
-        enable_dhcp_server: false
-
-

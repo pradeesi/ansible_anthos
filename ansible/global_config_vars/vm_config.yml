@@ -1,4 +1,13 @@
 ---
+# ------------------------------------------
+# file: global_config_vars/vm_config.yml
+# ver: 1.0
+# ansible ver: 2.7.8
+# python ver: 2.7.15
+# author: Pradeep Singh
+# description: KVM Virtual Machine Config Variables
+# ------------------------------------------
+
 
 kvm_virtual_machines:
   - kvm_host: 192.168.1.114
@@ -14,9 +23,7 @@ kvm_virtual_machines:
           - network: pxe_network
             pxe_boot_interface: true
             mac_addr: 52:54:00:4b:55:f4  # MAC Address is mandatory for host specific pxe boot process
-          - network: vmware_internal_mgmt_nw
-          - network: vmware_external_vm_nw
-          - network: vmware_internal_vm_nw
+          - network: anthos_nw
         pxe_boot_config:
           pxe_os: esxi6.5
           host_name: esxi1
@@ -38,9 +45,7 @@ kvm_virtual_machines:
           - network: pxe_network
             pxe_boot_interface: true
             mac_addr: 52:54:00:4b:55:f5 # MAC Address is mandatory for host specific pxe boot process
-          - network: vmware_internal_mgmt_nw
-          - network: vmware_external_vm_nw
-          - network: vmware_internal_vm_nw
+          - network: anthos_nw
         pxe_boot_config:
           pxe_os: esxi6.5
           host_name: esxi2
@@ -62,9 +67,7 @@ kvm_virtual_machines:
           - network: pxe_network
             pxe_boot_interface: true
             mac_addr: 52:54:00:4b:55:35  # MAC Address is mandatory for host specific pxe boot process
-          - network: vmware_internal_mgmt_nw
-          - network: vmware_external_vm_nw
-          - network: vmware_internal_vm_nw
+          - network: anthos_nw
         pxe_boot_config:
           pxe_os: esxi6.5
           host_name: esxi3
@@ -87,9 +90,7 @@ kvm_virtual_machines:
           - network: pxe_network
             pxe_boot_interface: true
             mac_addr: 52:54:00:4b:25:35  # MAC Address is mandatory for host specific pxe boot process
-          - network: vmware_internal_mgmt_nw
-          - network: vmware_external_vm_nw
-          - network: vmware_internal_vm_nw
+          - network: anthos_nw
         pxe_boot_config:
           pxe_os: esxi6.5
           host_name: esxi4

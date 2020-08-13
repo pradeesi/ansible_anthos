@@ -1,10 +1,25 @@
+---
+# ------------------------------------------
+# file: global_config_vars/os_images_and_pxe_boot_config.yml
+# ver: 1.0
+# ansible ver: 2.7.8
+# python ver: 2.7.15
+# author: Pradeep Singh
+# description: PXE Boot Server, OS ISO Images, and Path Variables
+# ------------------------------------------
 
-# PXE Server Config
+
+#======================================
+# KVM Based PXE Server Config
+#======================================
+
 pxe_srvr_ip: 192.168.1.114
 tftp_srvr_directory: /var/lib/tftpboot
 ftp_srvr_directory: /var/ftp/pub
 http_srvr_directory: /var/www/html
 bootp_file_name: pxelinux.0
+
+#======================================
 
 
 

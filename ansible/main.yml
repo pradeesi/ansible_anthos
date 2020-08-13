@@ -15,13 +15,6 @@
   gather_facts: yes
   connection: ssh
 
-# - name: manage libvirt guests
-#   user: root
-#   hosts: localhost
-#   gather_facts: yes
-#   connection: local
-
-
 
   tasks:
 
@@ -33,37 +26,40 @@
         name: load_config_vars
 #---------------------------------------------
 
+
+# ------------------------------
+# Configure Base Setup
+# ------------------------------
+    # - name: Include Baremetal Config Role
+    #   include_role:
+    #     name: baremetal_config_master
+# ------------------------------
+
+
 # ------------------------------
 # Configure KVM Server 
 # ------------------------------
-
     # Configure KVM Server
     - name: Include KVM Role
       include_role:
         name: kvm_master
-
 # ------------------------------
+
 
 # ------------------------------
 # Configure PXE Boot Server 
 # ------------------------------
-
-    # Configure PXE Boot Server
     - name: Configure PXE Boot Server
       include_role:
         name: pxe_server_master
       vars:
         operation: 'configure_pxe_server'
-
 # ------------------------------
-
 
 
 # ------------------------------
 # Create VMs on KVM Host 
 # ------------------------------
-
-    # KVM Based Virtual Machine Manager Role
     - name: Include kvm_vm_master role
       include_role:
         name: kvm_vm_master
@@ -73,14 +69,15 @@
       when:
         - kvm_hosts is defined
         - kvm_hosts_item.kvm_host_vms is defined
-
 # ------------------------------
 
 
-    # # Install vCenter Server
-    # - name: Install Vmware vCenter Server Appliance
-    #   include_role:
-    #     name: vcenter_master
-
+# ------------------------------
+# Install vCenter Server
+# ------------------------------
+    - name: Install Vmware vCenter Server Appliance
+      include_role:
+        name: vcenter_master
+# ------------------------------
 
 

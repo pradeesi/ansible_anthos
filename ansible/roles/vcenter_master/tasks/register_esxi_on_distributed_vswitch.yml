@@ -1,11 +1,12 @@
 ---
 # ------------------------------------------
-# file: ansible/roles/vcenter_master/tasks/register_esxi_on_vcenter.yml
+# file: ansible/roles/vcenter_master/tasks/register_esxi_on_distributed_vswitch.yml
 # ansible ver: 2.7.8
 # python ver: 2.7.15
 # author: Pradeep Singh
-# description: This task will register ESXi host on vCenter server
+# description: This task will register ESXi host on distributed vswitch
 # ------------------------------------------
+
 
 
 # Prepare json filters (jmespath)
@@ -13,25 +14,26 @@
     esxi_host_ip_filter: "[*].virtual_machines[?name=='{{esxi_host_item.kvm_vm_name}}'].pxe_boot_config.ip_addr"
     esxi_host_password_filter: "[*].virtual_machines[?name=='{{esxi_host_item.kvm_vm_name}}'].pxe_boot_config.root_password"
 
-# - name: Print Filter on Console
-#   debug: msg="{{esxi_host_ip_filter}}"
+- name: Print Filter on Console
+  debug: msg="{{esxi_host_ip_filter}}"
+
 
 # Parse variables using the json filters
 - set_fact:
     esxi_host_ip: "{{ kvm_virtual_machines | json_query(esxi_host_ip_filter) | json_query('[0][0]')}}"
     esxi_host_password: "{{ kvm_virtual_machines | json_query(esxi_host_password_filter) | json_query('[0][0]')}}"
 
-# Register ESXi on vCetner
-- name: Add ESXi Host to vCenter
-  vmware_host:
+
+# Add ESXi Host to Distributed Virtual Switch
+- name: Add Host to dVS
+  vmware_dvs_host:
     hostname: "{{vcenter.ip_address}}"
     username: "administrator@{{vcenter.sso_domain_name}}"
     password: "{{vcenter.sso_password}}"
     validate_certs: no
-    datacenter_name: "{{vcenter.vcenter_config.datacenter_name}}"
-    cluster_name: "{{vcenter.vcenter_config.esxi_cluster.cluster_name}}"
     esxi_hostname: "{{esxi_host_ip}}"
-    esxi_username: "root"
-    esxi_password: "{{esxi_host_password}}"
+    switch_name:  "{{vcenter.vcenter_config.distributed_virtual_switch.dvs_name}}"
+    vmnics: 
+      - "{{esxi_host_item.vmnic}}"
     state: present
 

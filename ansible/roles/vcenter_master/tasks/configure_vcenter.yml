@@ -1,4 +1,11 @@
 ---
+# ------------------------------------------
+# file: ansible/roles/vcenter_master/tasks/configure_vcenter.yml
+# ansible ver: 2.7.8
+# python ver: 2.7.15
+# author: Pradeep Singh
+# description: This task will configure vCenter server after installation
+# ------------------------------------------
 
 
 # Create vCenter Datacenter
@@ -32,7 +39,7 @@
     cluster_name: "{{vcenter.vcenter_config.esxi_cluster.cluster_name}}"
     enable_drs: yes
   when: 
-    - "{{vcenter.vcenter_config.esxi_cluster.enable_drs}}"
+    - vcenter.vcenter_config.esxi_cluster.enable_drs
 
 # Enable vSAN
 - name: Enable vSAN and claim storage automatically on vCenter Cluster - "{{vcenter.vcenter_config.esxi_cluster.cluster_name}}"
@@ -46,7 +53,7 @@
     enable_vsan: True
     vsan_auto_claim_storage: True
   when: 
-    - "{{vcenter.vcenter_config.esxi_cluster.enable_vsan}}"
+    - vcenter.vcenter_config.esxi_cluster.enable_vsan
 
 # Enable HA
 - name: Enable HA on vCenter Cluster - "{{vcenter.vcenter_config.esxi_cluster.cluster_name}}"
@@ -59,16 +66,43 @@
     cluster_name: "{{vcenter.vcenter_config.esxi_cluster.cluster_name}}"
     enable_ha: yes
   when: 
-    - "{{vcenter.vcenter_config.esxi_cluster.enable_ha}}"
+    - vcenter.vcenter_config.esxi_cluster.enable_ha
 
 
 # Register ESXi Hosts to vCenter Server
 - name: Register ESXi Hosts onto vCenter Server
   include_tasks: register_esxi_on_vcenter.yml
-  with_items: "{{ kvm_virtual_machines }}"
+  with_items: "{{ vcenter.vcenter_config.esxi_cluster.esxi_hosts }}"
   loop_control:
-    loop_var: kvm_hosts_item
+    loop_var: esxi_host_item
   when:
-    - kvm_virtual_machines is defined
-    - kvm_hosts_item.virtual_machines is defined
-    - inventory_hostname == kvm_hosts_item.kvm_host
+    - vcenter.vcenter_config.esxi_cluster.esxi_hosts is defined
+
+# Create Distributed virtual switch
+- name: Create dvSwitch
+  vmware_dvswitch:
+    hostname: "{{vcenter.ip_address}}"
+    username: "administrator@{{vcenter.sso_domain_name}}"
+    password: "{{vcenter.sso_password}}"
+    validate_certs: no
+    datacenter_name: "{{vcenter.vcenter_config.datacenter_name}}"
+    switch:  "{{vcenter.vcenter_config.distributed_virtual_switch.dvs_name}}"
+    version: 6.0.0
+    mtu: 9000
+    uplink_quantity: 1
+    discovery_protocol: lldp
+    discovery_operation: both
+    state: present
+  when:
+    - vcenter.vcenter_config.distributed_virtual_switch is defined
+  
+
+# Register ESXi Hosts to Distributed Virtual Switch 
+- name: Register ESXi Hosts onto Distributed Virtual Switch 
+  include_tasks: register_esxi_on_distributed_vswitch.yml
+  with_items: "{{ vcenter.vcenter_config.distributed_virtual_switch.esxi_hosts }}"
+  loop_control:
+    loop_var: esxi_host_item
+  when:
+    - vcenter.vcenter_config.distributed_virtual_switch is defined
+

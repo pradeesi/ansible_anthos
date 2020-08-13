@@ -25,10 +25,10 @@
         name: load_config_vars
 #---------------------------------------------
 
-    # # Install vCenter Server
-    # - name: Install Vmware vCenter Server Appliance
-    #   include_role:
-    #     name: vcenter_master
+    # Install vCenter Server
+    - name: Install Vmware vCenter Server Appliance
+      include_role:
+        name: vcenter_master
 
 
 
@@ -128,19 +128,19 @@
 
 
 
-    - set_fact:
-        esxi_host_ip_filter: "[*].virtual_machines[?name=='esxi1'].pxe_boot_config.ip_addr"
-        esxi_host_password_filter: "[*].virtual_machines[?name=='esxi1'].pxe_boot_config.root_password"
+    # - set_fact:
+    #     esxi_host_ip_filter: "[*].virtual_machines[?name=='esxi1'].pxe_boot_config.ip_addr"
+    #     esxi_host_password_filter: "[*].virtual_machines[?name=='esxi1'].pxe_boot_config.root_password"
 
-    - set_fact:
-        esxi_host_ip: "{{ kvm_virtual_machines | json_query(esxi_host_ip_filter) | json_query('[0][0]')}}"
-        esxi_host_password: "{{ kvm_virtual_machines | json_query(esxi_host_password_filter) | json_query('[0][0]')}}"
+    # - set_fact:
+    #     esxi_host_ip: "{{ kvm_virtual_machines | json_query(esxi_host_ip_filter) | json_query('[0][0]')}}"
+    #     esxi_host_password: "{{ kvm_virtual_machines | json_query(esxi_host_password_filter) | json_query('[0][0]')}}"
 
 
-    - name: IP Addr
-      debug: msg="{{ esxi_host_ip }}"
+    # - name: IP Addr
+    #   debug: msg="{{ esxi_host_ip }}"
      
 
-    - name: IP Addr
-      debug: msg="{{ esxi_host_password }}"
+    # - name: IP Addr
+    #   debug: msg="{{ esxi_host_password }}"
 

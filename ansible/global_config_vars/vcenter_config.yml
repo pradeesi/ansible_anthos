@@ -25,9 +25,9 @@ vcenter:
     datacenter_name: Datacenter
     esxi_cluster:
       cluster_name: New cluster
-      enable_drs: true
-      enable_ha: true
-      enable_vsan: true
+      enable_drs: false
+      enable_ha: false
+      enable_vsan: false
       esxi_hosts:     
         - kvm_vm_name: esxi1
         - kvm_vm_name: esxi2
@@ -36,17 +36,12 @@ vcenter:
       dvs_name: DSwitch
       esxi_hosts:
         - kvm_vm_name: esxi1
-          vmnics:
-            - vmnic1
-            - vmnic2
+          vmnic: vmnic1
         - kvm_vm_name: esxi2
-          vmnics:
-            - vmnic1
-            - vmnic2
+          vmnic: vmnic1
         - kvm_vm_name: esxi3
-          vmnics:
-            - vmnic1
-            - vmnic2
+          vmnic: vmnic1
+
 
 
 

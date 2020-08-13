@@ -9,8 +9,11 @@
 # description: vCenter role main file
 # ------------------------------------------
 
-- name: Check ESXi Host readiness on KVM
-  include_tasks: vcenter6_5/check_esxi_vm_readiness.yml
+# - name: Check ESXi Host readiness on KVM
+#   include_tasks: vcenter6_5/check_esxi_vm_readiness.yml
+
+# - name: Install vmware vCenter 6.5
+#   include_tasks: vcenter6_5/install_vmware_vcenter6_5.yml
 
 - name: Install vmware vCenter 6.5
-  include_tasks: vcenter6_5/install_vmware_vcenter6_5.yml
+  include_tasks: configure_vcenter.yml

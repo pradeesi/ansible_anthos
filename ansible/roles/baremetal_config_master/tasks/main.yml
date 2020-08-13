@@ -44,6 +44,10 @@
   pip:
     name: PyVmomi
     
+- name: Install 'jmespath' python package (required ansible json_filter)
+  pip:
+    name: jmespath
+
 #---------------------------------------------
 
 

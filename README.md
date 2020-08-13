@@ -27,3 +27,5 @@ pip install lxml
 pip install PyVmomi
 
 pip install jmespath 
+
+============================

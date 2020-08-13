@@ -9,17 +9,6 @@
 # ------------------------------------------
 
 
-# # Create or Delete VM
-# - name: Include Select VM Operation Task (Add or Delete VM?)
-#   include_tasks: select_vm_operation.yml
-#   with_items: "{{ kvm_hosts_item.kvm_host_vms }}"
-#   loop_control:
-#     loop_var: vm_item
-#   when:
-#     - kvm_hosts_item.kvm_host_vms is defined
-# #    - inventory_hostname == kvm_hosts_item.kvm_host
-
-
 # KVM Based Virtual Machine Manager Role
 - name: Include manage kvm host virtual machines task
   include_tasks: manage_kvm_host_vms.yml

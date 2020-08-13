@@ -60,10 +60,11 @@
     host: "{{esxi_host_ip}}"
     port: "80"
     delay: 1
+    timeout: 3600     # Host provisioning may take time.
     state: started
 
-- name: sleep for 5 seconds and continue with play
+- name: sleep for 10 seconds and continue with play
   wait_for:
-    timeout: 5
+    timeout: 10
  
 

@@ -30,9 +30,9 @@
 # ------------------------------
 # Configure Base Setup
 # ------------------------------
-    # - name: Include Baremetal Config Role
-    #   include_role:
-    #     name: baremetal_config_master
+    - name: Include Baremetal Config Role
+      include_role:
+        name: baremetal_config_master
 # ------------------------------
 
 
@@ -63,12 +63,8 @@
     - name: Include kvm_vm_master role
       include_role:
         name: kvm_vm_master
-      with_items: "{{ kvm_hosts }}"
-      loop_control:
-        loop_var: kvm_hosts_item
       when:
-        - kvm_hosts is defined
-        - kvm_hosts_item.kvm_host_vms is defined
+        - kvm_virtual_machines is defined
 # ------------------------------
 
 
@@ -78,6 +74,7 @@
     - name: Install Vmware vCenter Server Appliance
       include_role:
         name: vcenter_master
+      vars:
+        wait_before_starting_provisioning: 480 # Adjust this value (Time in seconds). Wait for ESXi VM to be provisioned.
 # ------------------------------
-
 

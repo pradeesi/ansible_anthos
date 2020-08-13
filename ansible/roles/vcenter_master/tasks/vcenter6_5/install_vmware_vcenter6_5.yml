@@ -68,6 +68,25 @@
     force: yes
     mode: '1777'
 
+
+# WAIT BEFORE STARTING DEPLOYMENT
+
+- name: Set default wait time, if it is not defined
+  set_fact:
+    wait_before_starting_provisioning: 2
+  when: 
+    - wait_before_starting_provisioning is not defined
+
+- name: "Wait for {{wait_before_starting_provisioning}} seconds to make sure ESXi Hosts get provisioned."
+  wait_for:
+    timeout: "{{wait_before_starting_provisioning}}"
+
+- name: Check ESXi Host readiness on KVM
+  include_tasks: check_esxi_vm_readiness.yml
+  vars:
+    esxi_host_kvm_vm_name: "{{vcenter.esxi_host.kvm_vm_name}}"
+    esxi_host_ip: "{{vcenter.esxi_host.hostname}}"
+
 - name: Install vCenter 6.5
   shell: "./vcsa-cli-installer/lin64/vcsa-deploy install --skip-ovftool-verification --accept-eula --acknowledge-ceip --verbose --no-esx-ssl-verify {{http_srvr_directory}}/{{vcenter6_5_ks_file_folder}}/config.json"
   args:

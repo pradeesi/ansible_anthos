@@ -9,12 +9,6 @@
 # description: vCenter role main file
 # ------------------------------------------
 
-- name: Check ESXi Host readiness on KVM
-  include_tasks: check_esxi_vm_readiness.yml
-  vars:
-    esxi_host_kvm_vm_name: "{{vcenter.esxi_host.kvm_vm_name}}"
-    esxi_host_ip: "{{vcenter.esxi_host.hostname}}"
-
 
 - name: "Check if the vCenter VM already exist - {{vcenter.name}}"
   vmware_guest_find:
@@ -27,8 +21,8 @@
   ignore_errors: yes
 
 
-- name: Print Filter on Console
-  debug: msg="{{vm_facts.failed}}"
+- name: Print error status
+  debug: msg="vCenter VM Doesn't exist- {{vm_facts.failed}}"
 
 - name: Install vmware vCenter 6.5 if it isn't installed
   include_tasks: vcenter6_5/install_vmware_vcenter6_5.yml

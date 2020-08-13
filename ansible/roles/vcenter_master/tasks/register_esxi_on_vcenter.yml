@@ -9,7 +9,8 @@
 
 
 # Prepare json filters (jmespath)
-- set_fact:
+- name: prepare json_filters (jmespath) for esxi ip and password
+  set_fact:
     esxi_host_ip_filter: "[*].virtual_machines[?name=='{{esxi_host_item.kvm_vm_name}}'].pxe_boot_config.ip_addr"
     esxi_host_password_filter: "[*].virtual_machines[?name=='{{esxi_host_item.kvm_vm_name}}'].pxe_boot_config.root_password"
 
@@ -17,12 +18,20 @@
 #   debug: msg="{{esxi_host_ip_filter}}"
 
 # Parse variables using the json filters
-- set_fact:
+- name: Set esxi ip and password
+  set_fact:
     esxi_host_ip: "{{ kvm_virtual_machines | json_query(esxi_host_ip_filter) | json_query('[0][0]')}}"
     esxi_host_password: "{{ kvm_virtual_machines | json_query(esxi_host_password_filter) | json_query('[0][0]')}}"
 
+# Check if ESXi host is ready on KVM
+- name: Check ESXi Host readiness on KVM
+  include_tasks: check_esxi_vm_readiness.yml
+  vars:
+    esxi_host_kvm_vm_name: "{{esxi_host_item.kvm_vm_name}}"
+#    esxi_host_ip: 
+
 # Register ESXi on vCetner
-- name: Add ESXi Host to vCenter
+- name: "Add ESXi Host - {{esxi_host_item.kvm_vm_name}} to vCenter"
   vmware_host:
     hostname: "{{vcenter.ip_address}}"
     username: "administrator@{{vcenter.sso_domain_name}}"

@@ -106,3 +106,17 @@
   when:
     - vcenter.vcenter_config.distributed_virtual_switch is defined
 
+# Create Port Group on Distributed vSwitch
+- name: "Create vlan - {{vcenter.vcenter_config.distributed_virtual_switch.port_group_vlan_id}}, portgroup - {{vcenter.vcenter_config.distributed_virtual_switch.port_group_name}}, on Distributed vSwitch - {{vcenter.vcenter_config.distributed_virtual_switch.dvs_name}}"
+  vmware_dvs_portgroup:
+    hostname: "{{vcenter.ip_address}}"
+    username: "administrator@{{vcenter.sso_domain_name}}"
+    password: "{{vcenter.sso_password}}"
+    validate_certs: no
+    portgroup_name: "{{vcenter.vcenter_config.distributed_virtual_switch.port_group_name}}"
+    switch_name: "{{vcenter.vcenter_config.distributed_virtual_switch.dvs_name}}"
+    vlan_id: "{{vcenter.vcenter_config.distributed_virtual_switch.port_group_vlan_id}}"
+    num_ports: 120
+    portgroup_type: earlyBinding
+    state: present
+

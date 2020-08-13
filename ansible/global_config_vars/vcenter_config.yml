@@ -16,7 +16,7 @@ vcenter:
   esxi_host:
     kvm_vm_name: esxi1
     hostname: 192.168.2.6
-    http_port: 80
+#    http_port: 80
     username: root
     password: cisco123
     deployment_network: VM Network
@@ -34,6 +34,8 @@ vcenter:
         - kvm_vm_name: esxi3
     distributed_virtual_switch:
       dvs_name: DSwitch
+      port_group_name: anthos
+      port_group_vlan_id: 0
       esxi_hosts:
         - kvm_vm_name: esxi1
           vmnic: vmnic1

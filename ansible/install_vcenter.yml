@@ -144,3 +144,18 @@
     # - name: IP Addr
     #   debug: msg="{{ esxi_host_password }}"
 
+
+
+
+    # - name: "Find folder for VM - {{ vm_name }}"
+    #   vmware_guest_find:
+    #     hostname: "192.168.2.6"
+    #     username: "root"
+    #     password: "cisco123"
+    #     validate_certs: no
+    #     name: "Embedded-vCenter-Server-Appliance"
+    #   register: vm_facts
+    #   ignore_errors: yes 
+
+    # - name: Print Filter on Console
+    #   debug: msg="{{vm_facts.failed}}"

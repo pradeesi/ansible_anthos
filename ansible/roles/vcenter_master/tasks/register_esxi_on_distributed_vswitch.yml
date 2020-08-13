@@ -10,22 +10,24 @@
 
 
 # Prepare json filters (jmespath)
-- set_fact:
+- name: prepare json_filters (jmespath) for esxi ip and password
+  set_fact:
     esxi_host_ip_filter: "[*].virtual_machines[?name=='{{esxi_host_item.kvm_vm_name}}'].pxe_boot_config.ip_addr"
     esxi_host_password_filter: "[*].virtual_machines[?name=='{{esxi_host_item.kvm_vm_name}}'].pxe_boot_config.root_password"
 
-- name: Print Filter on Console
-  debug: msg="{{esxi_host_ip_filter}}"
+# - name: Print Filter on Console
+#   debug: msg="{{esxi_host_ip_filter}}"
 
 
 # Parse variables using the json filters
-- set_fact:
+- name: Set esxi ip and password
+  set_fact:
     esxi_host_ip: "{{ kvm_virtual_machines | json_query(esxi_host_ip_filter) | json_query('[0][0]')}}"
     esxi_host_password: "{{ kvm_virtual_machines | json_query(esxi_host_password_filter) | json_query('[0][0]')}}"
 
 
 # Add ESXi Host to Distributed Virtual Switch
-- name: Add Host to dVS
+- name: "Add ESXi Host - {{esxi_host_item.kvm_vm_name}} to dVS - {{vcenter.vcenter_config.distributed_virtual_switch.dvs_name}}"
   vmware_dvs_host:
     hostname: "{{vcenter.ip_address}}"
     username: "administrator@{{vcenter.sso_domain_name}}"

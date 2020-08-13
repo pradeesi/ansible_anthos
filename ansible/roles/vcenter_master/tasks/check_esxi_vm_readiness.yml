@@ -1,12 +1,17 @@
 ---
 # ------------------------------------------
-# file: roles/vcenter_master/tasks/vcenter6_5/check_pre_reqs.yml
+# file: roles/vcenter_master/tasks/check_esxi_vm_readiness.yml
 # ver: 1.0
 # ansible ver: 2.7.8
 # python ver: 2.7.15
 # author: Pradeep Singh
 # description: Check if the ESXi vm is available and powered on
 # ------------------------------------------
+
+
+# Variables - 
+# esxi_host_kvm_vm_name
+# esxi_host_ip
 
 
 # Check if ESXi vm exists
@@ -28,32 +33,37 @@
     - name: Power-on ESXi host
       block: 
 
-        - name: "Power on ESXi VM - {{vcenter.esxi_host.kvm_vm_name}}"
-          command: "virsh start {{vcenter.esxi_host.kvm_vm_name}}"
+        - name: "Power on ESXi VM - {{esxi_host_kvm_vm_name}}"
+          command: "virsh start {{esxi_host_kvm_vm_name}}"
           become: true
         
         - name: Wait for ESXi host to become ready
           wait_for:
-            host: "{{vcenter.esxi_host.hostname}}"
-            port: "{{vcenter.esxi_host.http_port}}"
-            delay: 15
+            host: "{{esxi_host_ip}}"
+            port: "80"
+            delay: 20
             state: started
 
-      when: not (running_vms.stdout | regex_search( vcenter.esxi_host.kvm_vm_name ))
+      when: not (running_vms.stdout | regex_search( esxi_host_kvm_vm_name ))
 
-  when: (vms_on_kvm.stdout | regex_search( vcenter.esxi_host.kvm_vm_name ))
+  when: (vms_on_kvm.stdout | regex_search( esxi_host_kvm_vm_name ))
 
 
 - name: Fail if ESXi VM isn't available on KVM Host
   fail:
-    msg: "Unable to find ESXi Host {{vcenter.esxi_host.kvm_vm_name}}. Please check the vcenter configuration in the 'vcenter_config.yml' file."
-  when: not (vms_on_kvm.stdout | regex_search( vcenter.esxi_host.kvm_vm_name ))
+    msg: "Unable to find ESXi Host {{esxi_host_kvm_vm_name}}. Please check the vcenter configuration in the 'vcenter_config.yml' file."
+  when: not (vms_on_kvm.stdout | regex_search( esxi_host_kvm_vm_name ))
 
 
 - name: Make sure ESXi is ready
   wait_for:
-    host: "{{vcenter.esxi_host.hostname}}"
-    port: "{{vcenter.esxi_host.http_port}}"
+    host: "{{esxi_host_ip}}"
+    port: "80"
     delay: 1
     state: started
-    
+
+- name: sleep for 5 seconds and continue with play
+  wait_for:
+    timeout: 5
+ 
+

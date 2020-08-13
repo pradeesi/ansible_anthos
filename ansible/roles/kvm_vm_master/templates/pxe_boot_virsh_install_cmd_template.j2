@@ -10,6 +10,8 @@ virt-install \
 --video qxl \
 --disk pool=default,size={{vm_item.disk_size}},sparse=true,bus=ide,format=qcow2 \
 --force \
---cpu host \
+--cpu host-passthrough \
 --noautoconsole \
---pxe
+--pxe \
+{% if vm_item.os_type is defined %}--os-type {{vm_item.os_type}}{% endif %} \
+{% if vm_item.os_variant is defined %}--os-variant={{vm_item.os_variant}}{% endif %}

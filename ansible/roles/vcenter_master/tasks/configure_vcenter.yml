@@ -87,7 +87,7 @@
     validate_certs: no
     datacenter_name: "{{vcenter.vcenter_config.datacenter_name}}"
     switch:  "{{vcenter.vcenter_config.distributed_virtual_switch.dvs_name}}"
-    version: 6.0.0
+    version: "{{vcenter.vcenter_config.distributed_virtual_switch.version}}"
     mtu: 9000
     uplink_quantity: 1
     discovery_protocol: lldp

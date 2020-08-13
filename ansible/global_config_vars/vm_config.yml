@@ -18,7 +18,9 @@ kvm_virtual_machines:
         ram: 20480
         vcpus: 8
         disk_size: 400
-        os: esxi6.5
+#        os: esxi
+        os_type: linux
+        os_variant: virtio26
         netwrok_connections:
           - network: pxe_network
             pxe_boot_interface: true
@@ -32,7 +34,6 @@ kvm_virtual_machines:
           net_mask: 255.255.255.0
           gateway: 192.168.2.1
           dns_server: 192.168.2.1
-          register_this_esxi_on_vcenter: true    # Property only applicable for ESXi hosts. Set as 'true' if you want to register it on vCenter
     
       - name: esxi2
         action: create
@@ -40,7 +41,9 @@ kvm_virtual_machines:
         ram: 20480
         vcpus: 8
         disk_size: 400
-        os: esxi6.5
+#        os: esxi
+        os_type: linux
+        os_variant: virtio26
         netwrok_connections:
           - network: pxe_network
             pxe_boot_interface: true
@@ -54,7 +57,6 @@ kvm_virtual_machines:
           net_mask: 255.255.255.0
           gateway: 192.168.2.1
           dns_server: 192.168.2.1
-          register_this_esxi_on_vcenter: true    # Property only applicable for ESXi hosts. Set as 'true' if you want to register it on vCenter
 
       - name: esxi3
         action: create
@@ -62,7 +64,9 @@ kvm_virtual_machines:
         ram: 20480
         vcpus: 8
         disk_size: 400
-        os: generic
+#        os: esxi
+        os_type: linux
+        os_variant: virtio26
         netwrok_connections:
           - network: pxe_network
             pxe_boot_interface: true
@@ -76,5 +80,25 @@ kvm_virtual_machines:
           net_mask: 255.255.255.0
           gateway: 192.168.2.1
           dns_server: 192.168.2.1      
-          register_this_esxi_on_vcenter: true    # Property only applicable for ESXi hosts. Set as 'true' if you want to register it on vCenter
 
+      - name: centos7
+        action: create
+        installation_mode: pxe
+        ram: 4096
+        vcpus: 4
+        disk_size: 40
+#        os: centos
+        os_type: linux
+        os_variant: rhel7
+        netwrok_connections:
+          - network: pxe_network
+            pxe_boot_interface: true
+            mac_addr: 52:54:00:4b:55:15  # MAC Address is mandatory for host specific pxe boot process
+        pxe_boot_config:
+          pxe_os: centos7
+          host_name: centos7_vm
+          root_password: P@ssw0rd
+          ip_addr: 192.168.2.9
+          net_mask: 255.255.255.0
+          gateway: 192.168.2.1
+          dns_server: 192.168.2.1     

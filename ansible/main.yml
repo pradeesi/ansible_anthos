@@ -30,9 +30,9 @@
 # ------------------------------
 # Configure Base Setup
 # ------------------------------
-    - name: Include Baremetal Config Role
-      include_role:
-        name: baremetal_config_master
+    # - name: Include Baremetal Config Role
+    #   include_role:
+    #     name: baremetal_config_master
 # ------------------------------
 
 

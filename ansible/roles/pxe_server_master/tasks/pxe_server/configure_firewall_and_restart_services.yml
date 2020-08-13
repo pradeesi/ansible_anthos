@@ -1,0 +1,38 @@
+---
+# ------------------------------------------
+# file: roles/pxe_server/tasks/start_pxe_service.yml
+# ver: 1.0
+# ansible ver: 2.7.8
+# python ver: 2.7.15
+# author: Pradeep Singh
+# description: This file will open firewall ports, configure service autostart at boot, and restart the services
+# ------------------------------------------
+
+
+# ------------------------------------------
+# Open Firewall Ports, Enable Service Autostart, and Restart the Services
+# ------------------------------------------
+
+- name: Open Firewall ports for - ftp, tftp, http
+  firewalld:
+    port: "{{ item }}"
+    permanent: yes
+    state: enabled
+  with_items: [20/tcp, 21/tcp, 69/udp, 80/tcp, 443/tcp]
+
+
+- name: Enable service autostart at boot (xinetd and vsftpd)
+  systemd:
+    name: "{{ item }}"
+    enabled: yes
+  with_items: ["xinetd", "vsftpd", "httpd"]
+  
+
+- name: Restart services - xinetd, vsftpd, httpd, and firewalld
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: "{{ item }}"
+  with_items: ["xinetd", "vsftpd", "httpd", "firewalld"]
+
+# ------------------------------------------

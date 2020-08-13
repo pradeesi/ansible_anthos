@@ -1,0 +1,118 @@
+---
+# ------------------------------------------
+# file: roles/pxe_server/tasks/pxe_server/configure_pxe_boot_server.yml
+# ver: 1.0
+# ansible ver: 2.7.8
+# python ver: 2.7.15
+# author: Pradeep Singh
+# description: Primary file to configure pxe server.
+# ------------------------------------------
+
+
+# ------------------------------------------
+# Related Documents - 
+# https://www.unixmen.com/install-pxe-server-centos-7/
+# https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/virtualization_deployment_and_administration_guide/chap-network_booting_with_libvirt#sect-Preparing_the_boot_server-Setting_up_a_PXE_boot_server_on_a_private_libvirt_network
+# https://fabianlee.org/2018/09/19/kvm-deploying-a-nested-version-of-vmware-esxi-6-7-inside-kvm/
+# https://docs.centos.org/en-US/8-docs/advanced-install/assembly_preparing-for-a-network-install/
+# ------------------------------------------
+
+
+# ------------------------------------------
+# Install PXE Server Libraries for CentOS
+# ------------------------------------------
+
+- name: Install common software requirements for PXE Server
+  become: true
+  yum:
+    state: present
+    name: 
+      - httpd
+      - tftp
+      - tftp-server
+      - syslinux
+      - wget
+      - vsftpd
+      - xinetd
+
+# ------------------------------------------
+# Configure TFTP
+# ------------------------------------------
+
+- name: Create a tftp server directory directory if it does not exist
+  become: true
+  file:
+    path: "{{ tftp_srvr_directory }}"
+    state: directory
+    mode: '1777'
+
+- name: Enable tftp server
+  lineinfile:
+    dest: /etc/xinetd.d/tftp
+    backrefs: yes
+    backup: yes
+    regexp: '^(\s+disable\s+=)'
+    line: '\1 no'
+    state: present
+
+# ------------------------------------------
+# Create PXE Boot Environmet
+# ------------------------------------------
+
+- name: Copy PXE files from syslinux to tftp directory - "{{ tftp_srvr_directory }}"
+  become: true
+  copy: 
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    remote_src: yes
+  with_items:
+    - { src: '/usr/share/syslinux/pxelinux.0', dest: "{{ tftp_srvr_directory }}" }
+    - { src: '/usr/share/syslinux/menu.c32', dest: "{{ tftp_srvr_directory }}" }
+    - { src: '/usr/share/syslinux/memdisk', dest: "{{ tftp_srvr_directory }}" }
+    - { src: '/usr/share/syslinux/mboot.c32', dest: "{{ tftp_srvr_directory }}" }
+    - { src: '/usr/share/syslinux/chain.c32', dest: "{{ tftp_srvr_directory }}" }
+
+
+- name: Create a 'pxelinux.cfg' and 'netboot' directories.
+  become: true
+  file:
+    path: "{{item}}"
+    state: directory
+    recurse: yes
+    mode: '1777'
+  with_items: ["{{ tftp_srvr_directory }}/pxelinux.cfg", "{{ tftp_srvr_directory }}/netboot/"]
+
+# ------------------------------------------
+
+
+
+# ------------------------------------------
+# Configure OS Specific PXE Boot Config
+# ------------------------------------------
+- name: Configure KVM vSwitch for PXE Boot
+  include_tasks: pxe_server/create_os_specific_pxe_boot_config.yml
+# ------------------------------------------
+
+
+# ------------------------------------------
+# Create PXE Menu (pxelinux.cfg/default)
+# ------------------------------------------
+# pxelinux.cfg/default
+- name: Create 'pxelinux.cfg/default' file (PXE menu file) - "{{ tftp_srvr_directory }}/pxelinux.cfg/default"
+  template:
+    src: templates/pxe/default_pxe_menu_file.j2
+    dest: "{{ tftp_srvr_directory }}/pxelinux.cfg/default"
+    force: yes
+    mode: '1777'
+# ------------------------------------------
+
+
+# ------------------------------------------
+# Configure Firewall and Restart Linux Services 
+# ------------------------------------------
+
+- name: Configure Firewall and Restart Linux Services
+  include_tasks: pxe_server/configure_firewall_and_restart_services.yml
+
+# ------------------------------------------
+

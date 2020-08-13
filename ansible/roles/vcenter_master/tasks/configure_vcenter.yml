@@ -1,0 +1,74 @@
+---
+
+
+# Create vCenter Datacenter
+- name: Create vCenter Datacenter - "{{vcenter.vcenter_config.datacenter_name}}"
+  vmware_datacenter:
+    hostname: "{{vcenter.ip_address}}"
+    username: "administrator@{{vcenter.sso_domain_name}}"
+    password: "{{vcenter.sso_password}}"
+    validate_certs: no
+    datacenter_name: "{{vcenter.vcenter_config.datacenter_name}}"
+    state: present
+
+# Create vCenter Cluster
+- name: Create vCenter Cluster - "{{vcenter.vcenter_config.esxi_cluster.cluster_name}}"
+  vmware_cluster:
+    hostname: "{{vcenter.ip_address}}"
+    username: "administrator@{{vcenter.sso_domain_name}}"
+    password: "{{vcenter.sso_password}}"
+    validate_certs: no
+    datacenter_name: "{{vcenter.vcenter_config.datacenter_name}}"
+    cluster_name: "{{vcenter.vcenter_config.esxi_cluster.cluster_name}}"
+
+# Enable DRS
+- name: Enable DRS on vCenter Cluster - "{{vcenter.vcenter_config.esxi_cluster.cluster_name}}"
+  vmware_cluster_drs:
+    hostname: "{{vcenter.ip_address}}"
+    username: "administrator@{{vcenter.sso_domain_name}}"
+    password: "{{vcenter.sso_password}}"
+    validate_certs: no
+    datacenter_name:  "{{vcenter.vcenter_config.datacenter_name}}"
+    cluster_name: "{{vcenter.vcenter_config.esxi_cluster.cluster_name}}"
+    enable_drs: yes
+  when: 
+    - "{{vcenter.vcenter_config.esxi_cluster.enable_drs}}"
+
+# Enable vSAN
+- name: Enable vSAN and claim storage automatically on vCenter Cluster - "{{vcenter.vcenter_config.esxi_cluster.cluster_name}}"
+  vmware_cluster_vsan:
+    hostname: "{{vcenter.ip_address}}"
+    username: "administrator@{{vcenter.sso_domain_name}}"
+    password: "{{vcenter.sso_password}}"
+    validate_certs: no
+    datacenter_name: "{{vcenter.vcenter_config.datacenter_name}}"
+    cluster_name: "{{vcenter.vcenter_config.esxi_cluster.cluster_name}}"
+    enable_vsan: True
+    vsan_auto_claim_storage: True
+  when: 
+    - "{{vcenter.vcenter_config.esxi_cluster.enable_vsan}}"
+
+# Enable HA
+- name: Enable HA on vCenter Cluster - "{{vcenter.vcenter_config.esxi_cluster.cluster_name}}"
+  vmware_cluster_ha:
+    hostname: "{{vcenter.ip_address}}"
+    username: "administrator@{{vcenter.sso_domain_name}}"
+    password: "{{vcenter.sso_password}}"
+    validate_certs: no
+    datacenter_name: "{{vcenter.vcenter_config.datacenter_name}}"
+    cluster_name: "{{vcenter.vcenter_config.esxi_cluster.cluster_name}}"
+    enable_ha: yes
+  when: 
+    - "{{vcenter.vcenter_config.esxi_cluster.enable_ha}}"
+
+
+# Register ESXi Hosts to vCenter Server
+- name: Register ESXi Hosts onto vCenter Server
+  include_tasks: register_esxi_on_vcenter.yml
+  with_items: "{{ kvm_virtual_machines }}"
+  loop_control:
+    loop_var: kvm_hosts_item
+  when:
+    - kvm_virtual_machines is defined
+    - kvm_hosts_item.virtual_machines is defined
+    - inventory_hostname == kvm_hosts_item.kvm_host

@@ -1,0 +1,29 @@
+---
+# ------------------------------------------
+# file: roles/pxe_server/tasks/centos7/host_specific_pxe_boot_setup_centos7.yml
+# ansible ver: 2.7.8
+# python ver: 2.7.15
+# author: Pradeep Singh
+# description: Host specific (MAC based) pxe boot config for centos 7
+# ------------------------------------------
+
+# Host specific CentOS 7 kickstart file
+- name: Create {{http_srvr_directory}}/{{centos7_ks_file_folder}}/{{vm_mac_add}} directory if it does not exist
+  file:
+    path: "{{http_srvr_directory}}/{{centos7_ks_file_folder}}/{{vm_mac_add}}"
+    state: directory
+    mode: '1777'
+
+- name: Create and copy CentOs 7 kickstart file into HTTP server directory - "{{http_srvr_directory}}/{{centos7_ks_file_folder}}/{{vm_mac_add}}/ks.cfg"
+  template:
+    src: templates/centos/centos7/host_specific_ks_file.j2
+    dest: "{{http_srvr_directory}}/{{centos7_ks_file_folder}}/{{vm_mac_add}}/ks.cfg"
+    mode: '1777'
+
+# Create PXE Menu File in pxelinux.cfg directory
+- name: Create MAC Address based PXE Menu file for CentOS 7 - "{{ tftp_srvr_directory }}/pxelinux.cfg/01-{{vm_mac_add}}"
+  template:
+    src: templates/pxe/centos7_mac_based_pxe_menu.j2
+    dest: "{{ tftp_srvr_directory }}/pxelinux.cfg/01-{{vm_mac_add}}"
+    force: yes
+    mode: '1777'

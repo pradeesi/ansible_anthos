@@ -1,0 +1,50 @@
+#version=RHEL8
+ignoredisk --only-use=sda
+autopart --type=lvm
+# Partition clearing information
+clearpart --none --initlabel
+# Use graphical install
+graphical
+# Keyboard layouts
+keyboard --vckeymap=us --xlayouts='us'
+# System language
+lang en_US.UTF-8
+
+# Network information
+network  --bootproto=dhcp --device=ens3 --ipv6=auto --activate
+network  --hostname=localhost.localdomain
+# Use network installation
+url --url="http://{{pxe_srvr_ip}}/{{centos8_iso_extracted_files_folder}}"
+# Root password
+rootpw google123
+# Run the Setup Agent on first boot
+firstboot --enable
+# Do not configure the X Window System
+skipx
+# System services
+services --enabled="chronyd"
+# System timezone
+timezone Asia/Dubai --isUtc
+user --groups=wheel --name=admin --password=$6$QgxdKrl2ucC7sNuT$v4h239qFGZI3peTfEcuMQjHZ4Lk6jfCpqGB1LwHdaxLci3u54XAuil1cHdTdJLgZnAu.l3ATImUXysBA6ytEH1 --iscrypted --gecos="admin"
+
+%packages
+@^server-product-environment
+@development
+@graphical-admin-tools
+@headless-management
+@legacy-unix
+@network-server
+@remote-system-management
+kexec-tools
+
+%end
+
+%addon com_redhat_kdump --enable --reserve-mb='auto'
+
+%end
+
+%anaconda
+pwpolicy root --minlen=6 --minquality=1 --notstrict --nochanges --notempty
+pwpolicy user --minlen=6 --minquality=1 --notstrict --nochanges --emptyok
+pwpolicy luks --minlen=6 --minquality=1 --notstrict --nochanges --notempty
+%end

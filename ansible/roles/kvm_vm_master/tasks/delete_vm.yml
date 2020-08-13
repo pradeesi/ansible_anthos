@@ -1,0 +1,40 @@
+---
+# ------------------------------------------
+# file: roles/vm_manager/tasks/create_pxe_boot_vm.yml
+# ver: 1.0
+# ansible ver: 2.7.8
+# python ver: 2.7.15
+# author: Pradeep Singh
+# description: This task will delete a virtual machine.
+# ------------------------------------------
+
+
+# Check if the vm exists
+- name: List existing VMs
+  command: "virsh list --all"
+  become: true
+  register: vms_on_kvm
+
+- name: Delete if VM exists
+  block:
+    # # Check vm state 
+    # - name: Check vm state
+    #   shell: virsh dominfo test_vm2 | grep State
+    #   register: vm_state
+
+    - name: Destry VM if it's not "shut off"
+      block:
+      
+        # Destroy Virtual Machine 
+        - name: Destroy Virtual Machine 
+          shell: virsh destroy {{vm_item.name}}
+      
+      when: vms_on_kvm.stdout | regex_search( "running" ) #'vm_state is not search("shut off")'
+
+    # Undefine Virtual Machine 
+    - name: Undefine Virtual Machine 
+      shell: virsh undefine {{vm_item.name}} --remove-all-storage      
+
+  when: vms_on_kvm.stdout | regex_search(vm_item.name)
+
+

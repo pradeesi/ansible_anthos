@@ -1,0 +1,29 @@
+#---------------------------------------------
+# Include Variables
+#---------------------------------------------
+
+    # Include KVM network variables file
+    - name: Include KVM Network Variables
+      include_vars:
+        file: global_config_vars/kvm_virtual_networks.yml
+
+    # DELETE ------ This once the kvm_virtual_networks.yml is ready
+    # - name: Include KVM Network Variables
+    #   include_vars:
+    #     file: global_config_vars/kvm_networks.yml
+
+    # Include pxe server variables file
+    - name: Include PXE Server Variables
+      include_vars:
+        file: global_config_vars/os_images_and_pxe_boot_config.yml
+
+    # Include kvm vm variable file
+    - name: Include KVM Guest (VM) Variables
+      include_vars:
+        file: global_config_vars/vm_config.yml
+
+    # Include vmware vcenter server variables file
+    - name: Include Vmware vCenter Server Variables
+      include_vars:
+        file: global_config_vars/vcenter_config.yml
+#---------------------------------------------

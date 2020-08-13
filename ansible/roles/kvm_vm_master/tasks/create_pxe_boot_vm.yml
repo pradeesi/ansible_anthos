@@ -1,0 +1,52 @@
+---
+# ------------------------------------------
+# file: roles/vm_manager/tasks/create_pxe_boot_vm.yml
+# ver: 1.0
+# ansible ver: 2.7.8
+# python ver: 2.7.15
+# author: Pradeep Singh
+# description: This task will create a VM and install OS via PXE Boot.
+# ------------------------------------------
+
+
+
+# Check if the vm exists
+- name: List existing VMs
+  command: "virsh list --all --name"
+  become: true
+  register: vms_on_kvm
+
+- name: Create if VM doesn't exist
+  block:
+
+    # Create New MAC Address based PXE boot configuration
+    - name: Create New MAC Address based PXE boot configuration
+      include_role:
+        name: pxe_server_master
+      when:
+        - vm_item.installation_mode == 'pxe'
+      vars:
+        - operation: 'create_mac_based_host_specific_pxe_config'
+        - vm_config: "{{ vm_item }}"
+
+    # Create virtual machine 
+    - name: Create PXE boot virtual machine 
+      shell: "{{ lookup('template', 'pxe_boot_virsh_install_cmd_template.j2') }}"
+      # |
+      #   virt-install \
+      #   --name={{vm_item.name}} \
+      #   --virt-type=kvm  \
+      #   --ram {{vm_item.ram}} \
+      #   --vcpus={{vm_item.vcpus}} \
+      #   --virt-type=kvm \
+      #   --hvm \
+      #   --network network:{{vm_item.network}},model=e1000,mac={{vm_item.mac_addr}} \
+      #   --graphics vnc \
+      #   --video qxl \
+      #   --disk pool=default,size={{vm_item.disk_size}},sparse=true,bus=ide,format=qcow2 \
+      #   --force \
+      #   --cpu host \
+      #   --noautoconsole \
+      #   --pxe
+
+  when: not (vms_on_kvm.stdout | regex_search( vm_item.name ))

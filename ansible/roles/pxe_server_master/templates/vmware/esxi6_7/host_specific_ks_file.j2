@@ -1,0 +1,52 @@
+vmaccepteula
+rootpw cisco123
+#for Local boot
+install --firstdisk --overwritevmfs
+#for SAN boot
+#install --firstdisk=remote --overwritevmfs
+
+network --bootproto=dhcp --vlanid=0
+# network --bootproto=static --ip=192.168.39.110 --netmask=255.255.255.0 --gateway=192.168.39.1 --vlanid=0  --nameserver=10.127.249.199 --hostname=spblade3
+
+
+#we poweroff ourselves in the 'post' section, and ucs will later power us on after changing the service profile
+#reboot
+
+%pre --interpreter=busybox
+hwclock -d %LIVE_VAR_DATE_1% -t %LIVE_VAR_TIME_UTC_1%
+date -s %LIVE_VAR_DATE_TIME_UTC_1%
+cd /tmp
+
+%firstboot --interpreter=busybox
+cd /tmp
+
+
+esxcfg-vswitch -A 'VM Network' vSwitch0
+
+
+
+###############################
+# enable & start remote ESXi Shell  (SSH)
+###############################
+vim-cmd hostsvc/enable_ssh
+vim-cmd hostsvc/start_ssh
+ 
+###############################
+# enable & start ESXi Shell (TSM)
+###############################
+vim-cmd hostsvc/enable_esx_shell
+vim-cmd hostsvc/start_esx_shell
+
+esxcli system hostname set --host=esxi65
+
+
+
+
+%post --interpreter=busybox --ignorefailure=true
+
+cd /tmp
+localcli network firewall set --default-action true
+localcli network firewall set --enabled false
+
+# Let us poweroff/shutdown our selves.
+reboot

@@ -1,0 +1,12 @@
+---
+
+
+# Manage KVM Virtual Network
+- name: Include select virtual network operation task
+  include_tasks: kvm_networks/select_virtual_network_opetation.yml
+  with_items: "{{ kvm_networks_item.virtual_networks }}"
+  loop_control:
+    loop_var: virtual_networks_item
+  when:
+    - kvm_networks_item.virtual_networks is defined
+

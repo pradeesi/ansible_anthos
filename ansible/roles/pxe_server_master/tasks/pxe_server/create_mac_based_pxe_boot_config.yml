@@ -1,0 +1,68 @@
+---
+# ------------------------------------------
+# file: roles/pxe_server/tasks/create_mac_based_pxe_boot_config.yml
+# ver: 1.0
+# ansible ver: 2.7.8
+# python ver: 2.7.15
+# author: Pradeep Singh
+# description: This task will create a host specific pxe boot config.
+# ------------------------------------------
+
+
+
+- name: BLOCK - Configure host specific (MAC Based) PXE parameters
+  block:
+
+    - name: Reset 'pxe_boot_interface_mac' variable
+      set_fact: 
+        pxe_boot_interface_mac: ""
+
+    - name: Find pxe boot interface mac address
+      set_fact: 
+        pxe_boot_interface_mac: "{{item.mac_addr}}"
+      with_items: "{{vm_config.netwrok_connections}}"
+      when: 
+       - item.pxe_boot_interface is defined
+       - item.pxe_boot_interface
+
+    - fail:
+        msg: Unable to find the MAC Address of the PXE Netwrok Interface. PXE Interface or MAC Address is not defined in vm config
+      when: pxe_boot_interface_mac == ""
+
+    # Repalce ":" with "-" in VM MAC Address
+    - name: Replace ":" with "-" in VM MAC Address
+      set_fact: 
+        vm_mac_add: "{{ (pxe_boot_interface_mac) | regex_replace(':','-') }}"
+
+    # Host specific PXE Config for ESXi 6.5
+    - name: Configure host specific (MAC Based) PXE parameters for vmware ESXi 6.5
+      include_tasks: esxi6_5/host_specific_pxe_boot_setup_vmware_esxi6_5.yml
+      when: 
+        - vm_config.pxe_boot_config.pxe_os == 'esxi6.5'
+        - enable_esxi6_5_pxe_installation == true
+        
+
+    # Host specific PXE Config for ESXi 6.7
+    - name: Configure host specific (MAC Based) PXE parameters for vmware ESXi 6.7
+      include_tasks: esxi6_7/host_specific_pxe_boot_setup_vmware_esxi6_7.yml
+      when: 
+        - vm_config.pxe_boot_config.pxe_os == 'esxi6.7'
+        - enable_esxi6_7_pxe_installation == true        
+
+    # Host specific PXE Config for CentOS 7
+    - name: Configure host specific (MAC Based) PXE parameters for vmware CentOS 7
+      include_tasks: centos7/host_specific_pxe_boot_setup_centos7.yml
+      when: 
+        - vm_config.pxe_boot_config.pxe_os == 'centos7'
+        - enable_centos7_pxe_installation == true
+
+    # Host specific PXE Config for CentOS 8
+    - name: Configure host specific (MAC Based) PXE parameters for vmware CentOS 8
+      include_tasks: centos8/host_specific_pxe_boot_setup_centos8.yml
+      when: 
+        - vm_config.pxe_boot_config.pxe_os == 'centos8'
+        - enable_centos8_pxe_installation == true
+
+  when:
+    - vm_config.pxe_boot_config is defined
+    - operation == 'create_mac_based_host_specific_pxe_config'

@@ -1,0 +1,90 @@
+
+# PXE Server Config
+pxe_srvr_ip: 192.168.1.114
+tftp_srvr_directory: /var/lib/tftpboot
+ftp_srvr_directory: /var/ftp/pub
+http_srvr_directory: /var/www/html
+bootp_file_name: pxelinux.0
+
+
+
+#======================================
+# ISO IMAGE SETTINGS
+#======================================
+
+# ISO Image Config
+#--------------------------------------
+unmount_iso_after_copying_files: true
+overwrite_iso_files_if_already_copied: false
+
+# CentOS 7 ISO and Kickstart Config
+#--------------------------------------
+enable_centos7_pxe_installation: true
+# Path on Ansible Host (Local)
+copy_centos7_iso: true
+centos7_iso_image_source_path: os_images/centos/centos7/CentOS-7-x86_64-Minimal-2003.iso
+# Paths on KVM Host (Remote)
+centos7_iso_image_path: /root/CentOS-7-x86_64-Minimal-2003.iso
+centos7_iso_mount_loc: /mnt/centos/centos7
+centos7_iso_extracted_files_folder: centos/centos7
+centos7_ks_file_folder: centos/centos7/centos7_ks
+
+# CentOS 8 ISO and Kickstart Config
+#--------------------------------------
+enable_centos8_pxe_installation: true
+# Path on Ansible Host (Local)
+copy_centos8_iso: true
+centos8_iso_image_source_path: os_images/centos/centos8/CentOS-8.2.2004-x86_64-minimal.iso
+# Paths on KVM Host (Remote)
+centos8_iso_image_path: /root/CentOS-8.2.2004-x86_64-minimal.iso
+centos8_iso_mount_loc: /mnt/centos/centos8
+centos8_iso_extracted_files_folder: centos/centos8
+centos8_ks_file_folder: centos/centos8/centos8_ks
+
+# vmware ESXi 6.5 ISO and Kickstart Config
+#--------------------------------------
+enable_esxi6_5_pxe_installation: true
+# Path on Ansible Host (Local)
+copy_esxi6_5_iso: true
+esxi6_5_iso_image_source_path: os_images/vmware/vmware_6_5/VMware-VMvisor-Installer-201908001-14320405.x86_64.iso
+# Paths on KVM Host (Remote)
+esxi6_5_iso_image_path: /root/VMware-VMvisor-Installer-201908001-14320405.x86_64.iso
+esxi6_5_iso_mount_loc: /mnt/vmware/vsphere6.5/esxi
+esxi6_5_iso_extracted_files_folder: vmware/vsphere6.5/esxi
+esxi6_5_ks_file_folder: vmware/vsphere6.5/esxi_ks_file
+
+# vmware vCenter Server 6.5 ISO and Kickstart Config
+#--------------------------------------
+# Path on Ansible Host (Local)
+copy_vcenter6_5_iso: true
+vcenter6_5_iso_image_source_path: os_images/vmware/vmware_6_5/VMware-VCSA-all-6.5.0-15259038.iso
+# Paths on KVM Host (Remote)
+vcenter6_5_iso_image_path: /root/VMware-VCSA-all-6.5.0-15259038.iso
+vcenter6_5_iso_mount_loc: /mnt/vmware/vsphere6.5/vcsa
+vcenter6_5_iso_extracted_files_folder: vmware/vsphere6.5/vcsa
+vcenter6_5_ks_file_folder: vmware/vsphere6.5/vcsa_ks_file
+
+# vmware ESXi 6.7 ISO and Kickstart Config
+#--------------------------------------
+enable_esxi6_7_pxe_installation: true
+# Path on Ansible Host (Local)
+copy_esxi6_7_iso: true
+esxi6_7_iso_image_source_path: os_images/vmware/vmware_6_7/VMware-VMvisor-Installer-201912001-15160138.x86_64.iso
+# Paths on KVM Host (Remote)
+esxi6_7_iso_image_path: /root/VMware-VMvisor-Installer-201912001-15160138.x86_64.iso
+esxi6_7_iso_mount_loc: /mnt/vmware/vsphere6_7/esxi
+esxi6_7_iso_extracted_files_folder: vmware/vsphere6_7/esxi
+esxi6_7_ks_file_folder: vmware/vsphere6_7/esxi_ks_file
+
+# vmware vCenter Server 6.7 ISO and Kickstart Config
+#--------------------------------------
+# Path on Ansible Host (Local)
+copy_vcenter6_7_iso: true
+vcenter6_7_iso_image_source_path: os_images/vmware/vmware_6_7/VMware-VCSA-all-6.7.0-16046470.iso
+# Paths on KVM Host (Remote)
+vcenter6_7_iso_image_path: /root/VMware-VCSA-all-6.7.0-16046470.iso
+vcenter6_7_iso_mount_loc: /mnt/vmware/vsphere6.7/vcsa
+vcenter6_7_iso_extracted_files_folder: vmware/vsphere6.7/vcsa
+vcenter6_7_ks_file_folder: vmware/vsphere6.7/vcsa_ks_file
+
+#======================================

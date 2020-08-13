@@ -1,0 +1,27 @@
+accepteula 
+install --firstdisk --overwritevmfs 
+rootpw P@ssw0rd
+reboot
+
+#network configuration
+network --bootproto=dhcp --vlanid=0
+
+# run the following command only on the firstboot
+%firstboot --interpreter=busybox
+ 
+# enable & start remote ESXi Shell (SSH)
+vim-cmd hostsvc/enable_ssh
+vim-cmd hostsvc/start_ssh
+ 
+# enable & start ESXi Shell (TSM)
+vim-cmd hostsvc/enable_esx_shell
+vim-cmd hostsvc/start_esx_shell
+
+# supress ESXi Shell shell warning - Thanks to Duncan (http://www.yellow-bricks.com/2011/07/21/esxi-5-suppressing-the-localremote-shell-warning/)
+esxcli system settings advanced set -o /UserVars/SuppressShellWarning -i 1
+
+#Disable ipv6
+esxcli network ip set --ipv6-enabled=0
+
+# Restart a last time
+reboot

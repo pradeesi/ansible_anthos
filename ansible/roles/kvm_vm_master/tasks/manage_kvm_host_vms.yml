@@ -1,0 +1,24 @@
+---
+# ------------------------------------------
+# file: roles/kvm_vm_master/tasks/manage_kvm_host_vms.yml
+# ver: 1.0
+# ansible ver: 2.7.8
+# python ver: 2.7.15
+# author: Pradeep Singh
+# description: This task will manage vms on a KVM host
+# ------------------------------------------
+
+
+
+# Create or Delete VM
+- name: Include Select VM Operation Task (Add or Delete VM?)
+  include_tasks: select_vm_operation.yml
+  with_items: "{{ kvm_hosts_item.virtual_machines }}"
+  loop_control:
+    loop_var: vm_item
+  when: 
+    - kvm_hosts_item.virtual_machines is defined
+
+  
+
+

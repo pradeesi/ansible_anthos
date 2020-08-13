@@ -1,0 +1,41 @@
+---
+# ------------------------------------------
+# file: roles/kvm_master/tasks/kvm_networks/delete_kvm_virtual_network.yml
+# ver: 1.0
+# ansible ver: 2.7.8
+# python ver: 2.7.15
+# author: Pradeep Singh
+# description: This file will delete a kvm virtual network
+# ------------------------------------------
+
+# ------------------------------------------
+# Manually Delete KVM Network -
+#
+# virsh net-list --all
+# virsh net-undefine <network name>
+# virsh net-destroy <network name>
+# virsh net-list --all
+# ------------------------------------------
+
+- name: List kvm vSwitches
+  virt_net:
+    command: list_nets
+  register: vswitch_list
+
+- name: Delete vSwitch if already created
+  block:
+  
+  - name: Stop kvm virtual network - "{{virtual_networks_item.network_name}}"
+    virt_net:
+      command: destroy
+      name: "{{virtual_networks_item.network_name}}"
+
+  - name: Delete kvm virtual network - "{{virtual_networks_item.network_name}}"
+    virt_net:
+      command: undefine
+      name: "{{virtual_networks_item.network_name}}"
+
+  when: 'vswitch_list is search(virtual_networks_item.network_name)'
+
+
+# ------------------------------------------

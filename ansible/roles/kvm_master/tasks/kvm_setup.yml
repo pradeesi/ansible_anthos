@@ -1,0 +1,103 @@
+---
+# ------------------------------------------
+# file: roles/kvm_master/tasks/kvm_setup.yml
+# ver: 1.0
+# ansible ver: 2.7.8
+# python ver: 2.7.15
+# author: Pradeep Singh
+# description: This task will install any missing KVM library/utility required by the playbooks.
+# ------------------------------------------
+
+
+# Install KVM Libraries for RedHat
+- name: Install common software requirements for CentOS 
+  become: true
+  yum:
+    state: present
+    name: 
+      - qemu-kvm
+      - qemu-img
+      - libvirt
+      - libvirt-python 
+      - libvirt-client 
+      - libguestfs-tools 
+      - virt-install
+      - virt-manager
+      - virt-viewer
+      - bridge-utils
+  when: ansible_os_family == 'RedHat'
+
+
+# Install KVM Libraries for Debian based distros
+- name: Install common software requirements for Ubuntu
+  become: true
+  apt:
+    state: present
+    name: 
+      - qemu-kvm
+      - qemu-utils
+      - qemu-system
+      - libvirt-daemon-system
+      - libvirt-daemon
+      - libvirt-clients
+      - libguestfs-tools 
+      - virtinst
+      - virt-manager
+      - virt-viewer
+      - bridge-utils
+      - virt-top
+      - libosinfo-bin
+  when: ansible_os_family == 'Debian'
+
+
+
+# Enable and Start the libvirtd service
+- name: Ensuring libvirtd Service Is Enabled and Started
+  service:
+    name: libvirtd
+    enabled: true
+    state: started
+  become: true
+
+
+# In Case you have Minimal CentOS 7 and RHEL 7 installation , 
+# then virt-manger will not start for that you need to install x-window package. 
+- name: install the x-window package
+  become: true
+  yum:
+    state: present
+    name: 
+      - "@X Window System"
+      - xorg-x11-xauth
+      - xorg-x11-fonts-*
+      - xorg-x11-utils
+  when: ansible_os_family == 'RedHat'
+
+# Install x-windows on Debian based distros
+- name: install the x-window package
+  become: true
+  apt:
+    state: present
+    name:
+      - xauth
+      - xserver-xorg-core
+      - xserver-xorg
+      - xorg
+      - openbox
+      - ubuntu-desktop  # optional - remove if you don't want to run ubuntu desktop
+  when: ansible_os_family == 'Debian'
+
+# Set KVM Domain Type
+- name: hw_virtualization_check | load cpu info
+  become: true
+  slurp:
+    src: /proc/cpuinfo
+  register: cpu_info
+
+- name: hw_virtualization_check | idenitfy hw virtualization support
+  set_fact:
+    kvm_domain_type: "{{ cpu_info['content'] | b64decode | regex_search('(vmx|svm)', multiline=True) | ternary('kvm', 'qemu') }}"
+
+# Cinfugure Nested Virtualization
+- name: Configure Nested Virtualization
+  include_tasks: enable_nested_virtualization.yml

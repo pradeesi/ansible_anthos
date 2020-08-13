@@ -1,0 +1,78 @@
+---
+# ------------------------------------------
+# file: roles/vcenter_master/tasks/vcenter6_5/install_vmware_vcenter6_5.yml
+# ver: 1.0
+# ansible ver: 2.7.8
+# python ver: 2.7.15
+# author: Pradeep Singh
+# description: This file will install vCenter Server Appliance on ESXi 6.5
+# ------------------------------------------
+
+
+# ISO File
+- name: Create {{http_srvr_directory}}/{{vcenter6_5_iso_extracted_files_folder}} directory if it does not exist
+  file:
+    path: "{{http_srvr_directory}}/{{vcenter6_5_iso_extracted_files_folder}}"
+    state: directory
+    mode: '1777'
+
+- name: Check if {{http_srvr_directory}}/{{vcenter6_5_iso_extracted_files_folder}} folder is empty before proceeding.
+  find:
+    paths: 
+      - "{{http_srvr_directory}}/{{vcenter6_5_iso_extracted_files_folder}}"
+  register: os_files_Found
+
+- name: Copy extracted OS files from ISO, if not copied already or in-case you want to overwrite files.
+  block:
+
+    - name: Mount vCenter 6.5 ISO Image from "{{ vcenter6_5_iso_image_path }}" onto "{{ vcenter6_5_iso_mount_loc }}"
+      mount:
+        path: "{{ vcenter6_5_iso_mount_loc }}"
+        src: "{{ vcenter6_5_iso_image_path }}"
+        fstype: iso9660
+        opts: ro,noauto
+        state: mounted
+
+    - name: Copy extracted vCenter 6.5 installation files into HTTP server (Apache) directory - "{{http_srvr_directory}}/{{vcenter6_5_iso_extracted_files_folder}}"
+      copy:
+        src: "{{ vcenter6_5_iso_mount_loc }}/"
+        dest: "{{http_srvr_directory}}/{{vcenter6_5_iso_extracted_files_folder}}"
+        remote_src: yes
+        force: yes
+        mode: '1777'
+
+    - name: Un-Mount ESXi 6.5 ISO Image from -  "{{ vcenter6_5_iso_mount_loc }}"
+      mount:
+        path: "{{ vcenter6_5_iso_mount_loc }}"
+        src: "{{ vcenter6_5_iso_image_path }}"
+        fstype: iso9660
+        opts: ro,noauto
+        state: unmounted
+      when: unmount_iso_after_copying_files
+
+  when: (os_files_Found.matched <= 0) or (overwrite_iso_files_if_already_copied)
+
+
+# Create Kickstart File Folder
+- name: Create {{http_srvr_directory}}/{{vcenter6_5_ks_file_folder}} directory if it does not exist
+  file:
+    path: "{{http_srvr_directory}}/{{vcenter6_5_ks_file_folder}}"
+    state: directory
+    mode: '1777'
+
+# Create config.json File (Answer File)
+- name: Create and copy vCenter 6.5 config.json file into HTTP server directory - "{{http_srvr_directory}}/{{vcenter6_5_ks_file_folder}}/config.json"
+  template:
+    src: templates/vcenter6_5/config.json.j2
+    dest: "{{http_srvr_directory}}/{{vcenter6_5_ks_file_folder}}/config.json"
+    force: yes
+    mode: '1777'
+
+- name: Install vCenter 6.5
+  shell: "./vcsa-cli-installer/lin64/vcsa-deploy install --skip-ovftool-verification --accept-eula --acknowledge-ceip --verbose --no-esx-ssl-verify {{http_srvr_directory}}/{{vcenter6_5_ks_file_folder}}/config.json"
+  args:
+    chdir: "{{http_srvr_directory}}/{{vcenter6_5_iso_extracted_files_folder}}"
+
+# ------------------------------------------
+
+

@@ -1,0 +1,38 @@
+---
+# ------------------------------------------
+# file: main.yml
+# ver: 1.0
+# ansible ver: 2.7.8
+# python ver: 2.7.15
+# author: Pradeep Singh
+# description: This is the main file for KVM based CI/CD Automation framework.
+# ------------------------------------------
+
+
+- name: Manage KVM Guests
+  user: root
+  hosts: KVM_HOSTS
+  gather_facts: yes
+  connection: ssh
+
+
+  tasks:
+
+#---------------------------------------------
+# Include Global Config Variables
+#---------------------------------------------
+    - name: Include KVM Role
+      include_role:
+        name: load_config_vars
+#---------------------------------------------
+
+
+    # KVM Based Virtual Machine Manager Role
+    - name: Include kvm_vm_master role
+      include_role:
+        name: kvm_vm_master
+      when:
+        - kvm_virtual_machines is defined
+
+
+

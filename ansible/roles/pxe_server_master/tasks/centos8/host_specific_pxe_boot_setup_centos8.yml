@@ -1,0 +1,29 @@
+---
+# ------------------------------------------
+# file: roles/pxe_server/tasks/centos8/host_specific_pxe_boot_setup_centos8.yml
+# ansible ver: 2.7.8
+# python ver: 2.7.15
+# author: Pradeep Singh
+# description: Host specific (MAC based) pxe boot config for centos 8
+# ------------------------------------------
+
+# Host specific CentOS 8 kickstart file
+- name: Create {{http_srvr_directory}}/{{centos8_ks_file_folder}}/{{vm_mac_add}} directory if it does not exist
+  file:
+    path: "{{http_srvr_directory}}/{{centos8_ks_file_folder}}/{{vm_mac_add}}"
+    state: directory
+    mode: '1777'
+
+- name: Create and copy CentOs 8 kickstart file into HTTP server directory - "{{http_srvr_directory}}/{{centos8_ks_file_folder}}/{{vm_mac_add}}/ks.cfg"
+  template:
+    src: templates/centos/centos8/host_specific_ks_file.j2
+    dest: "{{http_srvr_directory}}/{{centos8_ks_file_folder}}/{{vm_mac_add}}/ks.cfg"
+    mode: '1777'
+
+# Create PXE Menu File in pxelinux.cfg directory
+- name: Create MAC Address based PXE Menu file for CentOS 8 - "{{ tftp_srvr_directory }}/pxelinux.cfg/01-{{vm_mac_add}}"
+  template:
+    src: templates/pxe/centos8_mac_based_pxe_menu.j2
+    dest: "{{ tftp_srvr_directory }}/pxelinux.cfg/01-{{vm_mac_add}}"
+    force: yes
+    mode: '1777'

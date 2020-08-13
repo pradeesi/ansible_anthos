@@ -1,0 +1,96 @@
+---
+# ------------------------------------------
+# file: roles/pxe_server/tasks/pxe_boot_setup_for_vmware_esxi6_7.yml
+# ver: 1.0
+# ansible ver: 2.7.8
+# python ver: 2.7.15
+# author: Pradeep Singh
+# description: This file will copy ESXi 6.7 ISO files onto the PXE server to enable ESXi installation over PXE
+# ------------------------------------------
+
+# ------------------------------------------
+# Ducumentation -
+# https://docs.vmware.com/en/VMware-vSphere/6.7/com.vmware.esxi.install.doc/GUID-147D7509-EFB1-4391-973F-48B015B85C83.html
+# ------------------------------------------
+
+# ------------------------------------------
+# Setup vmware ESXi 6.7 PXE Boot Configuration  
+# ------------------------------------------
+
+# ISO File
+- name: Create {{http_srvr_directory}}/{{esxi6_7_iso_extracted_files_folder}} directory if it does not exist
+  file:
+    path: "{{http_srvr_directory}}/{{esxi6_7_iso_extracted_files_folder}}"
+    state: directory
+    mode: '1777'
+
+- name: Check if {{http_srvr_directory}}/{{esxi6_7_iso_extracted_files_folder}} folder is empty before proceeding.
+  find:
+    paths: "{{http_srvr_directory}}/{{esxi6_7_iso_extracted_files_folder}}"
+  register: os_files_Found
+
+- name: Copy extracted OS files from ISO, if not copied already or in-case you want to overwrite files.
+  block:
+
+    - name: Mount ESXi 6.7 ISO Image from "{{ esxi6_7_iso_image_path }}" onto "{{ esxi6_7_iso_mount_loc }}"
+      mount:
+        path: "{{ esxi6_7_iso_mount_loc }}"
+        src: "{{ esxi6_7_iso_image_path }}"
+        fstype: iso9660
+        opts: ro,noauto
+        state: mounted
+
+    - name: Copy extracted ESXi 6.7 installation files into HTTP server (Apache) directory - "{{http_srvr_directory}}/{{esxi6_7_iso_extracted_files_folder}}"
+      copy:
+        src: "{{ esxi6_7_iso_mount_loc }}/"
+        dest: "{{http_srvr_directory}}/{{esxi6_7_iso_extracted_files_folder}}"
+        remote_src: yes
+        force: yes
+        mode: '1777'
+
+    - name: Un-Mount ESXi 6.7 ISO Image from -  "{{ esxi6_7_iso_mount_loc }}"
+      mount:
+        path: "{{ esxi6_7_iso_mount_loc }}"
+        src: "{{ esxi6_7_iso_image_path }}"
+        fstype: iso9660
+        opts: ro,noauto
+        state: unmounted
+      when: unmount_iso_after_copying_files
+
+  when: (os_files_Found.matched <= 0) or (overwrite_iso_files_if_already_copied)
+
+
+# Create Kickstart File Folder
+- name: Create {{http_srvr_directory}}/{{esxi6_7_ks_file_folder}} directory if it does not exist
+  file:
+    path: "{{http_srvr_directory}}/{{esxi6_7_ks_file_folder}}"
+    state: directory
+    mode: '1777'
+
+# Default boot.cfg File
+- name: Create and copy ESXi 6.7 boot.cfg file into HTTP server directory - "{{http_srvr_directory}}/{{esxi6_7_ks_file_folder}}/boot.cfg"
+  template:
+    src: templates/vmware/esxi6_7/default_boot.cfg.j2
+    dest: "{{http_srvr_directory}}/{{esxi6_7_ks_file_folder}}/boot.cfg"
+    force: yes
+    mode: '1777'
+
+# Manual install boot.cfg File
+- name: Create and copy ESXi 6.7 boot.cfg file for manual installation into HTTP server directory - "{{http_srvr_directory}}/{{esxi6_7_iso_extracted_files_folder}}/boot.cfg"
+  template:
+    src: templates/vmware/esxi6_7/manual_install_boot.cfg.j2
+    dest: "{{http_srvr_directory}}/{{esxi6_7_iso_extracted_files_folder}}/boot.cfg"
+    force: yes
+    mode: '1777'
+
+# Default Kickstart File
+- name: Create and copy ESXi 6.7 kickstart file into HTTP server directory - "{{http_srvr_directory}}/{{esxi6_7_ks_file_folder}}/ks.cfg"
+  template:
+    src: templates/vmware/esxi6_7/default_ks_file.j2
+    dest: "{{http_srvr_directory}}/{{esxi6_7_ks_file_folder}}/ks.cfg"
+    force: yes
+    mode: '1777'
+    
+# ------------------------------------------
+
+

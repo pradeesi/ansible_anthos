@@ -1,0 +1,146 @@
+---
+# ------------------------------------------
+# file: install_vcenter.yml
+# ver: 1.0
+# ansible ver: 2.7.8
+# python ver: 2.7.15
+# author: Pradeep Singh
+# description: Install vCenter Server on ESXi
+# ------------------------------------------
+
+
+- name: Manage KVM Guests
+  user: root
+  hosts: KVM_HOSTS
+  gather_facts: yes
+  connection: ssh
+
+  tasks:
+
+#---------------------------------------------
+# Include Global Config Variables
+#---------------------------------------------
+    - name: Include KVM Role
+      include_role:
+        name: load_config_vars
+#---------------------------------------------
+
+    # # Install vCenter Server
+    # - name: Install Vmware vCenter Server Appliance
+    #   include_role:
+    #     name: vcenter_master
+
+
+
+
+    # - name: Create Datacenter
+    #   vmware_datacenter:
+    #     hostname: '192.168.2.5'
+    #     username: 'administrator@vsphere.local'
+    #     password: 'C!sc0123'
+    #     validate_certs: no
+    #     datacenter_name: 'Datacenter2'
+    #     state: present
+
+    # - name: Create Cluster
+    #   vmware_cluster:
+    #     hostname: '192.168.2.5'
+    #     username: 'administrator@vsphere.local'
+    #     password: 'C!sc0123'
+    #     validate_certs: no
+    #     datacenter_name: 'Datacenter2'
+    #     cluster_name: 'New Cluster 3'
+
+    # - name: Enable DRS
+    #   vmware_cluster_drs:
+    #     hostname: '192.168.2.5'
+    #     username: 'administrator@vsphere.local'
+    #     password: 'C!sc0123'
+    #     validate_certs: no
+    #     datacenter_name: 'Datacenter2'
+    #     cluster_name: 'New Cluster 3'
+    #     enable_drs: yes
+
+    # - name: Enable vSAN and claim storage automatically
+    #   vmware_cluster_vsan:
+    #     hostname: '192.168.2.5'
+    #     username: 'administrator@vsphere.local'
+    #     password: 'C!sc0123'
+    #     validate_certs: no
+    #     datacenter_name: 'Datacenter2'
+    #     cluster_name: 'New Cluster 3'
+    #     enable_vsan: True
+    #     vsan_auto_claim_storage: True
+
+    # - name: Enable HA without admission control
+    #   vmware_cluster_ha:
+    #     hostname: '192.168.2.5'
+    #     username: 'administrator@vsphere.local'
+    #     password: 'C!sc0123'
+    #     validate_certs: no
+    #     datacenter_name: 'Datacenter2'
+    #     cluster_name: 'New Cluster 3'
+    #     enable_ha: yes
+
+
+    # - name: Add ESXi Host to vCenter
+    #   vmware_host:
+    #     hostname: '192.168.2.5'
+    #     username: 'administrator@vsphere.local'
+    #     password: 'C!sc0123'
+    #     validate_certs: no
+    #     datacenter_name: 'Datacenter2'
+    #     cluster_name: 'New Cluster 3'
+    #     esxi_hostname: '192.168.2.9'
+    #     esxi_username: 'root'
+    #     esxi_password: 'cisco123'
+    #     state: present
+
+
+    # - name: Create dvSwitch
+    #   vmware_dvswitch:
+    #     hostname: '192.168.2.5'
+    #     username: 'administrator@vsphere.local'
+    #     password: 'C!sc0123'
+    #     validate_certs: no
+    #     datacenter_name: 'Datacenter2'
+    #     switch: dvSwitch2
+    #     version: 6.0.0
+    #     mtu: 9000
+    #     uplink_quantity: 1
+    #     discovery_protocol: lldp
+    #     discovery_operation: both
+    #     state: present
+
+
+    # - name: Add Host to dVS
+    #   vmware_dvs_host:
+    #     hostname: '192.168.2.5'
+    #     username: 'administrator@vsphere.local'
+    #     password: 'C!sc0123'
+    #     validate_certs: no
+    #     esxi_hostname: '192.168.2.9'
+    #     switch_name: dvSwitch2
+    #     vmnics:
+    #         - vmnic1
+    #     state: present
+
+
+
+
+    - set_fact:
+        esxi_host_ip_filter: "[*].virtual_machines[?name=='esxi1'].pxe_boot_config.ip_addr"
+        esxi_host_password_filter: "[*].virtual_machines[?name=='esxi1'].pxe_boot_config.root_password"
+
+    - set_fact:
+        esxi_host_ip: "{{ kvm_virtual_machines | json_query(esxi_host_ip_filter) | json_query('[0][0]')}}"
+        esxi_host_password: "{{ kvm_virtual_machines | json_query(esxi_host_password_filter) | json_query('[0][0]')}}"
+
+
+    - name: IP Addr
+      debug: msg="{{ esxi_host_ip }}"
+     
+
+    - name: IP Addr
+      debug: msg="{{ esxi_host_password }}"
+

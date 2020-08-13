@@ -1,0 +1,44 @@
+- name: Manage KVM Guests
+  user: root
+  hosts: KVM_HOSTS
+  gather_facts: yes
+  connection: ssh
+
+  tasks:
+
+#---------------------------------------------
+# Include Global Config Variables
+#---------------------------------------------
+    - name: Include KVM Role
+      include_role:
+        name: load_config_vars
+#---------------------------------------------
+
+
+# # ------------------------------
+# # Configure Base Setup
+# # ------------------------------
+#     - name: Include Baremetal Config Role
+#       include_role:
+#         name: baremetal_config_master
+# # ------------------------------
+
+
+# ------------------------------
+# Configure KVM Server 
+# ------------------------------
+    - name: Include KVM Role
+      include_role:
+        name: kvm_master
+# ------------------------------
+
+
+# ------------------------------
+# Configure PXE Boot Server 
+# ------------------------------
+    - name: Configure PXE Boot Server
+      include_role:
+        name: pxe_server_master
+      vars:
+        operation: 'configure_pxe_server'
+# ------------------------------

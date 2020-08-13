@@ -1,0 +1,59 @@
+---
+# ------------------------------------------
+# file: roles/vcenter_master/tasks/vcenter6_5/check_pre_reqs.yml
+# ver: 1.0
+# ansible ver: 2.7.8
+# python ver: 2.7.15
+# author: Pradeep Singh
+# description: Check if the ESXi vm is available and powered on
+# ------------------------------------------
+
+
+# Check if ESXi vm exists
+- name: List All VMs
+  command: "virsh list --all --name"
+  become: true
+  register: vms_on_kvm
+
+- name: Check is ESXi server exists
+  block:
+
+    # Check if ESXi vm is powered-on
+    - name: List Running VMs
+      command: "virsh list --all --name --state-running"
+      become: true
+      register: running_vms
+
+      # Power on ESXi if its powered off
+    - name: Power-on ESXi host
+      block: 
+
+        - name: "Power on ESXi VM - {{vcenter.esxi_host.kvm_vm_name}}"
+          command: "virsh start {{vcenter.esxi_host.kvm_vm_name}}"
+          become: true
+        
+        - name: Wait for ESXi host to become ready
+          wait_for:
+            host: "{{vcenter.esxi_host.hostname}}"
+            port: "{{vcenter.esxi_host.http_port}}"
+            delay: 15
+            state: started
+
+      when: not (running_vms.stdout | regex_search( vcenter.esxi_host.kvm_vm_name ))
+
+  when: (vms_on_kvm.stdout | regex_search( vcenter.esxi_host.kvm_vm_name ))
+
+
+- name: Fail if ESXi VM isn't available on KVM Host
+  fail:
+    msg: "Unable to find ESXi Host {{vcenter.esxi_host.kvm_vm_name}}. Please check the vcenter configuration in the 'vcenter_config.yml' file."
+  when: not (vms_on_kvm.stdout | regex_search( vcenter.esxi_host.kvm_vm_name ))
+
+
+- name: Make sure ESXi is ready
+  wait_for:
+    host: "{{vcenter.esxi_host.hostname}}"
+    port: "{{vcenter.esxi_host.http_port}}"
+    delay: 1
+    state: started
+    

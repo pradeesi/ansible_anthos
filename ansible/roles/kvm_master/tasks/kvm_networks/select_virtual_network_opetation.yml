@@ -1,0 +1,22 @@
+---
+# ------------------------------------------
+# file: roles/kvm_master/tasks/kvm_networks/select_virtual_network_opetation.yml
+# ver: 1.0
+# ansible ver: 2.7.8
+# python ver: 2.7.15
+# author: Pradeep Singh
+# description: This task will invoke relevant tasks based on the kvm network operation defined in config.
+# ------------------------------------------
+
+
+# Create New KVM Virtual Network
+- name: Include create kvm virtual netwrok task
+  include_tasks: kvm_networks/create_kvm_virtual_network.yml
+  when:
+    - virtual_networks_item.action == 'create'
+
+# Delete KVM Virtual Network
+- name: Include delete kvm virtual netwrok task
+  include_tasks: kvm_networks/delete_kvm_virtual_network.yml
+  when:
+    - virtual_networks_item.action == 'delete'

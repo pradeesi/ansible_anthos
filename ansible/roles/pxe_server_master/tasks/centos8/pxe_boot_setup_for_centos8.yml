@@ -1,0 +1,78 @@
+---
+# ------------------------------------------
+# file: roles/pxe_server/tasks/centos8/pxe_boot_setup_for_centos8.yml
+# ver: 1.0
+# ansible ver: 2.7.8
+# python ver: 2.7.15
+# author: Pradeep Singh
+# description: PXE Boot setup for CentOS 8
+# ------------------------------------------
+
+
+# ------------------------------------------
+# Setup CentOS 8 PXE Boot Configuration  
+# ------------------------------------------
+
+- name: Create {{http_srvr_directory}}/{{centos8_iso_extracted_files_folder}} directory if it does not exist
+  file:
+    path: "{{http_srvr_directory}}/{{centos8_iso_extracted_files_folder}}"
+    state: directory
+    mode: '1777'
+
+- name: Check if {{http_srvr_directory}}/{{centos8_iso_extracted_files_folder}} folder is empty before proceeding.
+  find:
+    paths: "{{http_srvr_directory}}/{{centos8_iso_extracted_files_folder}}"
+  register: os_files_Found
+
+- name: Copy extracted OS files from ISO, if not copied already or in-case you want to overwrite files.
+  block:
+
+    # - name: Extract 'vmlinuz' and 'initrd.img' from ISO image into "{{ tftp_srvr_directory }}/netboot/"
+    #   iso_extract:
+    #     image: "{{ centos8_iso_image_path }}"
+    #     dest: "{{ tftp_srvr_directory }}/netboot/"
+    #     files:
+    #     - images/pxeboot/vmlinuz
+    #     - images/pxeboot/initrd.img
+
+    - name: Mount CentOS 8 ISO Image from "{{ centos8_iso_image_path }}" onto "{{ centos8_iso_mount_loc }}"
+      mount:
+        path: "{{ centos8_iso_mount_loc }}"
+        src: "{{ centos8_iso_image_path }}"
+        fstype: iso9660
+        opts: ro,noauto
+        state: mounted
+
+    - name: Copy extracted CentOS 8 installation files into HTTP server (Apache) directory - "{{http_srvr_directory}}/{{centos8_iso_extracted_files_folder}}"
+      copy:
+        src: "{{ centos8_iso_mount_loc }}/"
+        dest: "{{http_srvr_directory}}/{{centos8_iso_extracted_files_folder}}"
+        force: yes
+        remote_src: yes
+        mode: '1777'
+
+    - name: Un-Mount CentOS 8 ISO Image from -  "{{ centos8_iso_mount_loc }}"
+      mount:
+        path: "{{ centos8_iso_mount_loc }}"
+        src: "{{ centos8_iso_image_path }}"
+        fstype: iso9660
+        opts: ro,noauto
+        state: unmounted
+      when: unmount_iso_after_copying_files
+
+  when: (os_files_Found.matched <= 0) or (overwrite_iso_files_if_already_copied)
+
+# CentOS 8 Default kickstart file
+- name: Create {{http_srvr_directory}}/{{centos8_ks_file_folder}} directory if it does not exist
+  file:
+    path: "{{http_srvr_directory}}/{{centos8_ks_file_folder}}"
+    state: directory
+    mode: '1777'
+
+- name: Create and copy CentOs 8 kickstart file into HTTP server directory - "{{http_srvr_directory}}/{{centos8_ks_file_folder}}/ks.cfg"
+  template:
+    src: templates/centos/centos8/default_ks_file.j2
+    dest: "{{http_srvr_directory}}/{{centos8_ks_file_folder}}/ks.cfg"
+    mode: '1777'
+
+# ------------------------------------------

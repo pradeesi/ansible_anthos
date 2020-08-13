@@ -1,0 +1,85 @@
+ansible-playbook main.yml
+
+
+
+
+============================
+Key Based Authentication
+============================
+
+1. Create SSH Key on Ansible Host
+    
+    ssh-keygen
+ 
+    ~/.ssh/id_rsa.pub
+
+2. Copy Key file to SSH Server (KVM Host)
+
+    ssh-copy-id root@192.168.1.114
+============================
+
+============================
+COPY FILES
+============================
+sftp root@192.168.1.114
+put ansible_files.tar.gz
+put CentOS-7-x86_64-Minimal-2003.iso
+
+============================
+CentOS 7 Install Ansible
+============================
+
+yum -y update
+yum -y install epel-release
+yum repolist
+yum install epel-release
+yum install ansible
+yum install python-pip
+pip install lxml
+
+
+
+
+
+============================
+tar amd untar  Ansible files 
+============================
+
+CREATE TAR - tar -zcvf ansible_files.tar.gz ansible
+
+UNTAR FILE - tar -zxvf ansible_files.tar.gz
+
+
+============================
+On Mac to open "virt-manager" over x-windows
+============================
+
+Install Xquartz from -  https://www.xquartz.org/
+
+ssh -X pradeep@192.168.1.112
+
+virt-manager
+
+
+============================
+Port Forwarding on KVM host
+============================
+iptables -I FORWARD -o virbr1 -d  192.168.122.214 -j ACCEPT
+iptables -t nat -I PREROUTING -p tcp --dport 5010 -j DNAT --to 192.168.122.214:22
+
+
+iptables -I FORWARD -o virbr1 -d  192.168.122.214 -j ACCEPT
+iptables -t nat -A POSTROUTING -s 192.168.122.0/24 -j MASQUERADE
+iptables -A FORWARD -o virbr1 -m state --state RELATED,ESTABLISHED -j ACCEPT
+iptables -A FORWARD -i virbr1 -o eth0 -j ACCEPT
+iptables -A FORWARD -i virbr1 -o lo -j ACCEPT
+
+============================
+
+============================
+START STOP Firewall
+============================
+systemctl stop firewalld
+
+systemctl start firewalld
+============================

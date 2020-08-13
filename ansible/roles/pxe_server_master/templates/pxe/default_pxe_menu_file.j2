@@ -1,0 +1,65 @@
+ default menu.c32
+ prompt 0
+ timeout 30
+ MENU TITLE unixme.com PXE Menu
+
+
+{% if enable_centos7_pxe_installation %}
+
+ LABEL centos7_x64
+ MENU LABEL CentOS 7 X64 - Default Kickstart
+ KERNEL http://{{pxe_srvr_ip}}/{{centos7_iso_extracted_files_folder}}/images/pxeboot/vmlinuz
+ APPEND  initrd=http://{{pxe_srvr_ip}}/{{centos7_iso_extracted_files_folder}}/images/pxeboot/initrd.img  ip=dhcp inst.repo=http://{{pxe_srvr_ip}}/{{centos7_iso_extracted_files_folder}}  ks=http://{{pxe_srvr_ip}}/{{centos7_ks_file_folder}}/ks.cfg
+
+ LABEL centos7_x64
+ MENU LABEL CentOS 7 X64 - Manual Install
+ KERNEL http://{{pxe_srvr_ip}}/{{centos7_iso_extracted_files_folder}}/images/pxeboot/vmlinuz
+ APPEND  initrd=http://{{pxe_srvr_ip}}/{{centos7_iso_extracted_files_folder}}/images/pxeboot/initrd.img  ip=dhcp inst.repo=http://{{pxe_srvr_ip}}/{{centos7_iso_extracted_files_folder}} 
+
+{% endif %}
+
+{% if enable_centos8_pxe_installation %}
+
+LABEL centos8_x64
+ MENU LABEL CentOS 8 X64 - Default Kickstart
+ KERNEL http://{{pxe_srvr_ip}}/{{centos8_iso_extracted_files_folder}}/images/pxeboot/vmlinuz
+ APPEND  initrd=http://{{pxe_srvr_ip}}/{{centos8_iso_extracted_files_folder}}/images/pxeboot/initrd.img  ip=dhcp inst.repo=http://{{pxe_srvr_ip}}/{{centos8_iso_extracted_files_folder}}  ks=http://{{pxe_srvr_ip}}/{{centos8_ks_file_folder}}/ks.cfg
+
+LABEL centos8_x64
+ MENU LABEL CentOS 8 X64 - Manual Install
+ KERNEL http://{{pxe_srvr_ip}}/{{centos8_iso_extracted_files_folder}}/images/pxeboot/vmlinuz
+ APPEND  initrd=http://{{pxe_srvr_ip}}/{{centos8_iso_extracted_files_folder}}/images/pxeboot/initrd.img  ip=dhcp inst.repo=http://{{pxe_srvr_ip}}/{{centos8_iso_extracted_files_folder}}
+
+{% endif %}
+
+{% if enable_esxi6_5_pxe_installation %}
+
+label ESXi6.5
+menu label VMware ESXi 6.5 - Default Kickstart
+kernel http://{{pxe_srvr_ip}}/{{esxi6_5_iso_extracted_files_folder}}/mboot.c32
+append -c http://{{pxe_srvr_ip}}/{{esxi6_5_ks_file_folder}}/boot.cfg  +++
+IPAPPEND 1
+
+label ESXi6.5
+menu label VMware ESXi 6.5 - Manual Install
+kernel http://{{pxe_srvr_ip}}/{{esxi6_5_iso_extracted_files_folder}}/mboot.c32
+append -c http://{{pxe_srvr_ip}}/{{esxi6_5_iso_extracted_files_folder}}/boot.cfg  +++
+IPAPPEND 1
+
+{% endif %}
+
+{% if enable_esxi6_7_pxe_installation %}
+
+label ESXi6.7
+menu label VMware ESXi 6.7 - Default Kickstart
+kernel http://{{pxe_srvr_ip}}/{{esxi6_7_iso_extracted_files_folder}}/mboot.c32
+append -c http://{{pxe_srvr_ip}}/{{esxi6_7_ks_file_folder}}/boot.cfg  +++
+IPAPPEND 1
+
+label ESXi6.7
+menu label VMware ESXi 6.7 - Manual Install
+kernel http://{{pxe_srvr_ip}}/{{esxi6_7_iso_extracted_files_folder}}/mboot.c32
+append -c http://{{pxe_srvr_ip}}/{{esxi6_7_iso_extracted_files_folder}}/boot.cfg  +++
+IPAPPEND 1
+
+{% endif %}

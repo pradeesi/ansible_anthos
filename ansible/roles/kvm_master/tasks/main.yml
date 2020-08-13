@@ -1,0 +1,25 @@
+---
+# ------------------------------------------
+# file: roles/kvm_master/tasks/main.yml
+# ver: 1.0
+# ansible ver: 2.7.8
+# python ver: 2.7.15
+# author: Pradeep Singh
+# description: Main file for the role.
+# ------------------------------------------
+
+# Validate KVM Installation
+- name: Include Validate KVM Setup Task
+  include_tasks: kvm_setup.yml
+ 
+
+# Manage KVM Virtual Networks
+- name: Include manage kvm virtual networks task
+  include_tasks: kvm_networks/manage_kvm_virtual_networks.yml
+  with_items: "{{ kvm_networks }}"
+  loop_control:
+    loop_var: kvm_networks_item
+  when:
+    - kvm_networks is defined
+    - kvm_networks_item.virtual_networks is defined
+    - inventory_hostname == kvm_networks_item.kvm_host

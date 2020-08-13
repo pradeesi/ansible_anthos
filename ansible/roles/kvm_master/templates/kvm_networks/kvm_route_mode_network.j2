@@ -1,0 +1,17 @@
+<network>
+  <name>{{virtual_networks_item.network_name}}</name>
+  <forward dev='{{virtual_networks_item.forwarding_host_device}}' mode='{{virtual_networks_item.mode}}'>
+    <interface dev='{{virtual_networks_item.forwarding_host_device}}'/>
+  </forward>
+  <bridge name='{{virtual_networks_item.bridge_name}}' stp='on' delay='0'/>
+  <domain name='{{virtual_networks_item.network_name}}'/>
+  <ip address='{{virtual_networks_item.ip_address}}' netmask='{{virtual_networks_item.net_mask}}'>
+{% if virtual_networks_item.enable_dhcp_server %}
+{% if virtual_networks_item.pxe_boot_network is defined %}{% if virtual_networks_item.pxe_boot_network %} <tftp root='{{tftp_srvr_directory}}'/> {% endif %}{% endif %}
+    <dhcp>
+      <range start='{{virtual_networks_item.dhcp_range_start}}' end='{{virtual_networks_item.dhcp_range_end}}'/>
+{% if virtual_networks_item.pxe_boot_network is defined %}{% if virtual_networks_item.pxe_boot_network %} <bootp file='{{bootp_file_name}}'/> {% endif %} {% endif %}
+    </dhcp>
+{% endif %}
+  </ip>
+</network>

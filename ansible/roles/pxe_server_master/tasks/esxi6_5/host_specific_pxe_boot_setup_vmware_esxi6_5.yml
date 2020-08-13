@@ -1,0 +1,43 @@
+---
+# ------------------------------------------
+# file: roles/pxe_server/tasks/esxi6_5/host_specific_pxe_boot_setup_vmware_esxi6_5.yml
+# ver: 1.0
+# ansible ver: 2.7.8
+# python ver: 2.7.15
+# author: Pradeep Singh
+# description: Host specific (MAC based) pxe boot config for vmware esxi 6.5
+# ------------------------------------------
+
+
+# Create directory if it doesn't exist
+- name: Create {{http_srvr_directory}}/{{esxi6_5_ks_file_folder}}/{{vm_mac_add}} directory if it does not exist
+  file:
+    path: "{{http_srvr_directory}}/{{esxi6_5_ks_file_folder}}/{{vm_mac_add}}"
+    state: directory
+    mode: '1777'
+
+# Host Specific (MAC Address Based) boot.cfg File
+- name: Create and copy host Specific ESXi 6.5 boot.cfg file into HTTP server directory - "{{http_srvr_directory}}/{{esxi6_5_ks_file_folder}}/{{vm_mac_add}}/boot.cfg"
+  template:
+    src: templates/vmware/esxi6_5/host_specific_boot.cfg.j2
+    dest: "{{http_srvr_directory}}/{{esxi6_5_ks_file_folder}}/{{vm_mac_add}}/boot.cfg"
+    force: yes
+    mode: '1777'
+
+# Host Specific (MAC Address Based)  Kickstart File
+- name: Create and copy host Specific ESXi 6.5 kickstart file into HTTP server directory - "{{http_srvr_directory}}/{{esxi6_5_ks_file_folder}}/{{vm_mac_add}}/ks.cfg"
+  template:
+    src: templates/vmware/esxi6_5/host_specific_ks_file.j2
+    dest: "{{http_srvr_directory}}/{{esxi6_5_ks_file_folder}}/{{vm_mac_add}}/ks.cfg"
+    force: yes
+    mode: '1777'
+
+# Create PXE Menu File in pxelinux.cfg directory
+- name: Create MAC Address based PXE Menu file for ESXi 6.5 - "{{ tftp_srvr_directory }}/pxelinux.cfg/01-{{vm_mac_add}}"
+  template:
+    src: templates/pxe/esxi6_5_mac_based_pxe_menu.j2
+    dest: "{{ tftp_srvr_directory }}/pxelinux.cfg/01-{{vm_mac_add}}"
+    force: yes
+    mode: '1777'
+
+  

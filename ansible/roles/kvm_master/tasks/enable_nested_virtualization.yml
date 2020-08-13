@@ -1,0 +1,46 @@
+---
+# ------------------------------------------
+# file: roles/kvm_master/tasks/enable_nested_virtualization.yml
+# ver: 1.0
+# ansible ver: 2.7.8
+# python ver: 2.7.15
+# author: Pradeep Singh
+# description: This task will enable nested virtualization on KVM.
+# ------------------------------------------
+
+
+- name: Configure Nested Virtualization for KVM on RedHat OS Family running on Intel Platform
+  block:
+
+    - name: Check if Nested Virtualization is enabled
+      shell: cat /sys/module/kvm_intel/parameters/nested
+      register: kvm_intel_nested
+
+    - name: Configure Nested Virtualization if not enabled
+      block:
+
+        - name: Create '/etc/modprobe.d/kvm-nested.conf' file
+          template:
+            src: templates/intel_nested_virtualization.j2
+            dest: /etc/modprobe.d/kvm-nested.conf
+
+        - name: Remove ‘kvm_intel‘ module
+          shell: modprobe -r kvm_intel
+   
+        - name: Add ‘kvm_intel‘ module
+          shell: modprobe -a kvm_intel
+          
+        - name: Check if Nested Virtualization is enabled
+          shell: cat /sys/module/kvm_intel/parameters/nested
+          register: kvm_intel_nested_validation
+
+        - name: Skip if Nested Virtualization is enabled
+          fail:
+            msg: Failed to enable Nested Virtualization. You may not be able to run nested hypervisors on this Host.
+          ignore_errors: yes
+          when: (kvm_intel_nested_validation.stdout is search("N"))
+          
+      when: (kvm_intel_nested.stdout is search("N"))
+
+  when: (ansible_processor is search("Intel")) and (ansible_os_family == 'RedHat')
+  

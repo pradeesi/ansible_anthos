@@ -1,0 +1,28 @@
+---
+# ------------------------------------------
+# file: roles/pxe_server/tasks/main.yml
+# ver: 1.0
+# ansible ver: 2.7.8
+# python ver: 2.7.15
+# author: Pradeep Singh
+# description: Main file pxe_server role.
+# ------------------------------------------
+
+
+# Setup CentOS based PXE Server
+- name: Setup CentOS 7 based PXE Boot Server
+  include_tasks: pxe_server/configure_pxe_boot_server.yml
+  when: 
+    - operation == 'configure_pxe_server'
+
+# Configure host specific (MAC Based) PXE parameters
+- name: Configure host specific (MAC Based) PXE parameters
+  include_tasks: pxe_server/create_mac_based_pxe_boot_config.yml
+  when: 
+    - operation == 'create_mac_based_host_specific_pxe_config'
+
+
+
+
+
+  

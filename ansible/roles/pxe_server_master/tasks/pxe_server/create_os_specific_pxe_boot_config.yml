@@ -1,0 +1,44 @@
+---
+# ------------------------------------------
+# file: roles/pxe_server_master/tasks/pxe_server/os_specific_pxe_boot_config.yml
+# ver: 1.0
+# ansible ver: 2.7.8
+# python ver: 2.7.15
+# author: Pradeep Singh
+# description: Configure OS Specific PXE Boot Config.
+# ------------------------------------------
+
+
+# ------------------------------------------
+# Setup CentOS 7 PXE Boot Configuration  
+# ------------------------------------------
+
+- name: Configure default PXE boot setup for CentOS 7
+  include_tasks: centos7/pxe_boot_setup_for_centos7.yml
+  when: enable_centos7_pxe_installation == true
+
+# ------------------------------------------
+# Setup CentOS 8 PXE Boot Configuration  
+# ------------------------------------------
+
+- name: Configure default PXE boot setup for CentOS 8
+  include_tasks: centos8/pxe_boot_setup_for_centos8.yml
+  when: enable_centos8_pxe_installation == true
+
+# ------------------------------------------
+# Setup vmware ESXi 6.5 PXE Boot Configuration  
+# ------------------------------------------
+
+- name: Configure default PXE boot setup for vmware ESXi 6.5
+  include_tasks: esxi6_5/pxe_boot_setup_for_vmware_esxi6_5.yml
+  when: enable_esxi6_5_pxe_installation == true
+
+# ------------------------------------------
+# Setup vmware ESXi 6.7 PXE Boot Configuration  
+# ------------------------------------------
+
+- name: Configure default PXE boot setup for vmware ESXi 6.7
+  include_tasks: esxi6_7/pxe_boot_setup_for_vmware_esxi6_7.yml
+  when: enable_esxi6_7_pxe_installation == true
+
+# ------------------------------------------

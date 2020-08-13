@@ -1,0 +1,9 @@
+ default menu.c32
+ prompt 0
+ timeout 30
+ MENU TITLE unixme.com PXE Menu
+
+ LABEL centos7_x64
+ MENU LABEL CentOS 7 X64
+ KERNEL http://{{pxe_srvr_ip}}/{{centos7_iso_extracted_files_folder}}/images/pxeboot/vmlinuz
+ APPEND  initrd=http://{{pxe_srvr_ip}}/{{centos7_iso_extracted_files_folder}}/images/pxeboot/initrd.img  ks=http://{{pxe_srvr_ip}}/{{centos7_ks_file_folder}}/{{vm_mac_add}}/ks.cfg

@@ -1,0 +1,30 @@
+---
+# ------------------------------------------
+# file: roles/vm_manager/tasks/select_vm_operation.yml
+# ver: 1.0
+# ansible ver: 2.7.8
+# python ver: 2.7.15
+# author: Pradeep Singh
+# description: This task will invoke relevant tasks based on the vm operation defined in config.
+# ------------------------------------------
+
+
+# Create New PXE Boot Virtual Machine
+- name: Include Create PXE VM Task
+  include_tasks: create_pxe_boot_vm.yml
+  when:
+    - vm_item.action == 'create'
+    - vm_item.installation_mode == 'pxe'
+
+# Create New Virtual Machine
+- name: Include Create VM Task
+  include_tasks: create_vm.yml
+  when:
+    - vm_item.action == 'create'
+    - vm_item.installation_mode == 'qcow2'
+
+# Delete Virtual Machine
+- name: Include Delete VM Task
+  include_tasks: delete_vm.yml
+  when:
+    - vm_item.action == 'delete'

@@ -1,0 +1,86 @@
+---
+# ------------------------------------------
+# file: main.yml
+# ver: 1.0
+# ansible ver: 2.7.8
+# python ver: 2.7.15
+# author: Pradeep Singh
+# description: This is the main file for KVM based CI/CD Automation framework.
+# ------------------------------------------
+
+
+- name: Manage KVM Guests
+  user: root
+  hosts: KVM_HOSTS
+  gather_facts: yes
+  connection: ssh
+
+# - name: manage libvirt guests
+#   user: root
+#   hosts: localhost
+#   gather_facts: yes
+#   connection: local
+
+
+
+  tasks:
+
+#---------------------------------------------
+# Include Global Config Variables
+#---------------------------------------------
+    - name: Include KVM Role
+      include_role:
+        name: load_config_vars
+#---------------------------------------------
+
+# ------------------------------
+# Configure KVM Server 
+# ------------------------------
+
+    # Configure KVM Server
+    - name: Include KVM Role
+      include_role:
+        name: kvm_master
+
+# ------------------------------
+
+# ------------------------------
+# Configure PXE Boot Server 
+# ------------------------------
+
+    # Configure PXE Boot Server
+    - name: Configure PXE Boot Server
+      include_role:
+        name: pxe_server_master
+      vars:
+        operation: 'configure_pxe_server'
+
+# ------------------------------
+
+
+
+# ------------------------------
+# Create VMs on KVM Host 
+# ------------------------------
+
+    # KVM Based Virtual Machine Manager Role
+    - name: Include kvm_vm_master role
+      include_role:
+        name: kvm_vm_master
+      with_items: "{{ kvm_hosts }}"
+      loop_control:
+        loop_var: kvm_hosts_item
+      when:
+        - kvm_hosts is defined
+        - kvm_hosts_item.kvm_host_vms is defined
+
+# ------------------------------
+
+
+    # # Install vCenter Server
+    # - name: Install Vmware vCenter Server Appliance
+    #   include_role:
+    #     name: vcenter_master
+
+
+

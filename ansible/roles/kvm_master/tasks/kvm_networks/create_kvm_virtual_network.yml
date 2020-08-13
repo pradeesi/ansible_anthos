@@ -1,0 +1,58 @@
+---
+# ------------------------------------------
+# file: roles/kvm_master/tasks/kvm_networks/create_kvm_virtual_network.yml
+# ver: 1.0
+# ansible ver: 2.7.8
+# python ver: 2.7.15
+# author: Pradeep Singh
+# description: This file will create a kvm virtual network
+# ------------------------------------------
+
+# ------------------------------------------
+# DOCUMENTS:
+# https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/virtualization_administration_guide/sect-attch-nic-physdev
+# https://libvirt.org/formatnetwork.html
+# ------------------------------------------
+
+# ------------------------------------------
+# IMPORTANT:
+# Ansible 'virt_net' has dependency on python 'lxml' module
+# If you see errors related to 'lxml' install this module on your ansible centOS host using the following commands -
+#
+# yum install python-pip
+# pip install lxml
+# ------------------------------------------
+
+
+
+# ------------------------------------------
+# Create PXE Menu (pxelinux.cfg/default)
+# ------------------------------------------
+
+- name: List kvm vSwitches
+  command: "virsh net-list --name --all"
+  become: true
+  register: vswitch_list
+
+- name: Create kvm network if it doesn't exist
+  block:
+
+    # Create kvm network
+    - name: Create kvm virtual network - {{virtual_networks_item.network_name}}
+      virt_net:
+        command: define
+        name: "{{virtual_networks_item.network_name}}"
+        xml: '{{ lookup("template", "kvm_networks/kvm_route_mode_network.j2") }}'
+
+    # Configure kvm network autostart
+    - name: Configure Autostart for Network Switch - {{virtual_networks_item.network_name}}
+      command: "virsh net-autostart --network {{virtual_networks_item.network_name}}"
+      become: true
+
+    # Start kvm netwrok 
+    - name: Start vSwitch - {{virtual_networks_item.network_name}}
+      virt_net:
+        state: active
+        name: "{{virtual_networks_item.network_name}}"
+
+  when: not (vswitch_list.stdout | regex_search( virtual_networks_item.network_name ))

@@ -33,6 +33,8 @@
     state: present
     name:
       - epel-release
+      - python-urllib3
+      - python-requests
       - ansible
       - python-pip
 

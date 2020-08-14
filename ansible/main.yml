@@ -30,9 +30,9 @@
 # ------------------------------
 # Configure Base Setup
 # ------------------------------
-    # - name: Include Baremetal Config Role
-    #   include_role:
-    #     name: baremetal_config_master
+    - name: Include Baremetal Config Role
+      include_role:
+        name: baremetal_config_master
 # ------------------------------
 
 
@@ -43,6 +43,8 @@
     - name: Include KVM Role
       include_role:
         name: kvm_master
+      vars:
+        - enable_kvm: true
 # ------------------------------
 
 
@@ -53,9 +55,20 @@
       include_role:
         name: pxe_server_master
       vars:
-        operation: 'configure_pxe_server'
+        - operation: 'configure_pxe_server'
 # ------------------------------
 
+
+# ------------------------------
+# Configure KVM Networks 
+# ------------------------------
+    # Configure KVM networks
+    - name: Include KVM Role
+      include_role:
+        name: kvm_master
+      vars:
+        - manage_kvm_networks: true 
+# ------------------------------
 
 # ------------------------------
 # Create VMs on KVM Host 

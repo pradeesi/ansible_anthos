@@ -8,9 +8,12 @@
 # description: Main file for the role.
 # ------------------------------------------
 
-# Validate KVM Installation
+# KVM Installation
 - name: Include Validate KVM Setup Task
   include_tasks: kvm_setup.yml
+  when: 
+    - enable_kvm is defined
+    - enable_kvm == true
  
 
 # Manage KVM Virtual Networks
@@ -23,3 +26,5 @@
     - kvm_networks is defined
     - kvm_networks_item.virtual_networks is defined
     - inventory_hostname == kvm_networks_item.kvm_host
+    - (manage_kvm_networks is defined and manage_kvm_networks == true)
+    

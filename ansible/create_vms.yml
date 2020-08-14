@@ -27,12 +27,28 @@
 #---------------------------------------------
 
 
+# ------------------------------
+# Configure KVM Networks 
+# ------------------------------
+    # Configure KVM networks
+    - name: Include KVM Role
+      include_role:
+        name: kvm_master
+      vars:
+        - manage_kvm_networks: true 
+# ------------------------------
+
+
+# ------------------------------
+# Manage KVM virtual Machines 
+# ------------------------------
     # KVM Based Virtual Machine Manager Role
     - name: Include kvm_vm_master role
       include_role:
         name: kvm_vm_master
       when:
         - kvm_virtual_machines is defined
+# ------------------------------
 
 
 

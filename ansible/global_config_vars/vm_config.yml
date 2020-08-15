@@ -92,7 +92,7 @@ kvm_virtual_machines:
             mac_addr: 52:54:00:4b:55:15  # MAC Address is mandatory for host specific pxe boot process
         pxe_boot_config:
           pxe_os: centos7
-          host_name: centos7_vm
+          host_name: gcloud_sdk_vm
           root_password: P@ssw0rd
           ip_addr: 192.168.2.4
           net_mask: 255.255.255.0

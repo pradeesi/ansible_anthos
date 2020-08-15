@@ -1,41 +1,63 @@
- #platform=x86, AMD64, or Intel EM64T
- #version=DEVEL
+#version=DEVEL
+ 
  # Firewall configuration
  firewall --disabled
+ 
  # Install OS instead of upgrade
  install
  # Use NFS installation media
  url --url="http://{{pxe_srvr_ip}}/{{centos7_iso_extracted_files_folder}}"
- # Root password 
- rootpw {{vm_config.pxe_boot_config.root_password}}
- # System authorization information
- auth  useshadow  passalgo=sha512
- # Use graphical install
- graphical
- firstboot disable
- # System keyboard
- keyboard us
- # System language
- lang en_US
- # SELinux configuration
- selinux disabled
- # Installation logging level
- logging level=info
+
+# Root password
+rootpw {{vm_config.pxe_boot_config.root_password}}
+
+# System authorization information
+auth --enableshadow --passalgo=sha512
+
+# Use graphical install
+graphical
+
+# Run the Setup Agent on first boot
+firstboot --enable
+
+# Keyboard layouts
+keyboard --vckeymap=us --xlayouts='us'
+# System language
+lang en_US.UTF-8
+
+# Network information
+#network  --bootproto=dhcp --device=eth0 --ipv6=auto --activate
+#network  --hostname=localhost.localdomain
+
+network --bootproto=static --ip={{vm_config.pxe_boot_config.ip_addr}} --netmask={{vm_config.pxe_boot_config.net_mask}} --gateway={{vm_config.pxe_boot_config.gateway}} --nameserver={{vm_config.pxe_boot_config.dns_server}}
+
+# System services
+services --enabled="chronyd"
+
 # System timezone
- timezone Europe/Amsterdam
- # System bootloader configuration
- bootloader location=mbr
- clearpart --all --initlabel
- part swap --asprimary --fstype="swap" --size=1024
- part /boot --fstype xfs --size=200
- part pv.01 --size=1 --grow
- volgroup rootvg01 pv.01
- logvol / --fstype xfs --name=lv01 --vgname=rootvg01 --size=1 --grow
+timezone Asia/Dubai --isUtc
+
+# System bootloader configuration
+bootloader location=mbr
+clearpart --all --initlabel
+part swap --asprimary --fstype="swap" --size=1024
+part /boot --fstype xfs --size=200
+part pv.01 --size=1 --grow
+volgroup rootvg01 pv.01
+logvol / --fstype xfs --name=lv01 --vgname=rootvg01 --size=1 --grow
+
+
 
 %packages
- @core
-# wget
- net-tools
- %end
- %post
- %end
+@^minimal
+@core
+chrony
+kexec-tools
+net-tools
+
+%end
+
+%addon com_redhat_kdump --enable --reserve-mb='auto'
+
+%end
+

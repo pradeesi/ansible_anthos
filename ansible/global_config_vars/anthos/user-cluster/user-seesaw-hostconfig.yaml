@@ -1,0 +1,16 @@
+hostconfig:
+  dns: "192.168.2.1"
+  tod: "192.138.210.214"
+  otherdns:
+  - "8.8.8.8"
+  - "8.8.4.4"
+  othertod:
+  - "ntp.ubuntu.com"
+  searchdomainsfordns:
+  - "my.local.com"
+blocks:
+  - netmask: "255.255.255.0"
+    gateway: "192.168.2.1"
+    ips:
+    - ip: "192.168.2.27"
+      hostname: "uc-seesaw-vm"

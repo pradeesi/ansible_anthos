@@ -1,0 +1,24 @@
+hostconfig:
+  dns: 192.168.2.1
+  tod: 216.239.35.0
+  otherdns:
+  - 8.8.8.8
+  - 8.8.4.4
+  othertod:
+  - ntp.ubuntu.com
+  searchdomainsfordns:
+  - "my.local.com"
+blocks:
+  - netmask: 255.255.252.0
+    gateway: 192.168.2.1
+    ips:
+    - ip: 192.168.2.31
+      hostname: admin-host1
+    - ip: 192.168.2.32
+      hostname: admin-host2
+    - ip: 192.168.2.33
+      hostname: admin-host3
+    - ip: 192.168.2.34
+      hostname: admin-host4
+    - ip: 192.168.2.35
+      hostname: admin-host5

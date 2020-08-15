@@ -1,0 +1,31 @@
+gcp:
+  whitelistedServiceAccountKeyPath: "/root/pradeesi-c25276a32cbb.json"
+vCenter:
+  credentials:
+    address: "192.168.2.5"
+    username: "administrator@vsphere.local"
+    password: "P@ssw0rd"
+  datacenter: "Datacenter"
+  datastore: "datastore2"
+  cluster: "Cluster"
+  network: "VM Network"
+  resourcePool: "Cluster/Resources"
+  caCertPath: "/root/certs/lin/e65bea3e.0"
+proxyUrl: ""
+adminWorkstation:
+  name: gke-admin-ws-200815-192127
+  cpus: 4
+  memoryMB: 8192
+  diskGB: 50
+  dataDiskName: gke-on-prem-admin-workstation-data-disk/gke-admin-ws-200815-192127-data-disk.vmdk
+  dataDiskMB: 512
+  network:
+    ipAllocationMode: "static"
+    hostConfig:
+      ip: "192.168.2.11"
+      gateway: "192.168.2.1"
+      netmask: "255.255.255.0"
+      dns:
+        - "192.168.2.1"
+  proxyUrl: ""
+  ntpServer: ntp.ubuntu.com

@@ -7,7 +7,7 @@
  # Use NFS installation media
  url --url="http://{{pxe_srvr_ip}}/{{centos7_iso_extracted_files_folder}}"
  # Root password 
- rootpw google123
+ rootpw {{vm_config.pxe_boot_config.root_password}}
  # System authorization information
  auth  useshadow  passalgo=sha512
  # Use graphical install

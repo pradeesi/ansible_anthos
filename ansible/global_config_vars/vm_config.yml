@@ -17,19 +17,18 @@ kvm_virtual_machines:
         installation_mode: pxe
         ram: 20480
         vcpus: 8
-        disk_size: 400
-#        os: esxi
+        disk_size: 500
         os_type: linux
         os_variant: virtio26
         netwrok_connections:
-          - network: pxe_network
+          - network: pxe-network
             pxe_boot_interface: true
             mac_addr: 52:54:00:4b:55:f4  # MAC Address is mandatory for host specific pxe boot process
-          - network: anthos_nw
+          - network: anthos-kvm-nw
         pxe_boot_config:
           pxe_os: esxi6.5
           host_name: esxi1
-          root_password: cisco123
+          root_password: P@ssw0rd
           ip_addr: 192.168.2.6
           net_mask: 255.255.255.0
           gateway: 192.168.2.1
@@ -40,19 +39,18 @@ kvm_virtual_machines:
         installation_mode: pxe
         ram: 20480
         vcpus: 8
-        disk_size: 400
-#        os: esxi
+        disk_size: 990
         os_type: linux
         os_variant: virtio26
         netwrok_connections:
-          - network: pxe_network
+          - network: pxe-network
             pxe_boot_interface: true
             mac_addr: 52:54:00:4b:55:f5 # MAC Address is mandatory for host specific pxe boot process
-          - network: anthos_nw
+          - network: anthos-kvm-nw
         pxe_boot_config:
           pxe_os: esxi6.5
           host_name: esxi2
-          root_password: cisco123
+          root_password: P@ssw0rd
           ip_addr: 192.168.2.7
           net_mask: 255.255.255.0
           gateway: 192.168.2.1
@@ -63,42 +61,40 @@ kvm_virtual_machines:
         installation_mode: pxe
         ram: 20480
         vcpus: 8
-        disk_size: 400
-#        os: esxi
+        disk_size: 500
         os_type: linux
         os_variant: virtio26
         netwrok_connections:
-          - network: pxe_network
+          - network: pxe-network
             pxe_boot_interface: true
             mac_addr: 52:54:00:4b:55:35  # MAC Address is mandatory for host specific pxe boot process
-          - network: anthos_nw
+          - network: anthos-kvm-nw
         pxe_boot_config:
           pxe_os: esxi6.5
           host_name: esxi3
-          root_password: cisco123
+          root_password: P@ssw0rd
           ip_addr: 192.168.2.8
           net_mask: 255.255.255.0
           gateway: 192.168.2.1
           dns_server: 192.168.2.1      
 
-      - name: centos7
+      - name: gcloud_sdk_vm
         action: create
         installation_mode: pxe
         ram: 4096
         vcpus: 4
         disk_size: 40
-#        os: centos
         os_type: linux
         os_variant: rhel7
         netwrok_connections:
-          - network: pxe_network
+          - network: pxe-network
             pxe_boot_interface: true
             mac_addr: 52:54:00:4b:55:15  # MAC Address is mandatory for host specific pxe boot process
         pxe_boot_config:
           pxe_os: centos7
           host_name: centos7_vm
           root_password: P@ssw0rd
-          ip_addr: 192.168.2.9
+          ip_addr: 192.168.2.4
           net_mask: 255.255.255.0
           gateway: 192.168.2.1
           dns_server: 192.168.2.1     

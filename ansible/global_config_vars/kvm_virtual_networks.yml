@@ -13,7 +13,7 @@ kvm_networks:
   - kvm_host: 192.168.1.114
     virtual_networks:
 
-      - network_name: pxe_network
+      - network_name: pxe-network
         action: create
         mode: route
         forwarding_host_device: enp0s20f0u2     # Use ifconfig or ip addr command to find the physical interface on KVM host
@@ -25,7 +25,7 @@ kvm_networks:
         dhcp_range_end: 192.168.2.254
         pxe_boot_network: true    #set as true if you want to enable pxe boot on this netwrok
 
-      - network_name: anthos_nw
+      - network_name: anthos-kvm-nw
         action: create
         mode: route
         forwarding_host_device: enp0s20f0u2     # Use ifconfig or ip addr command to find the physical interface on KVM host

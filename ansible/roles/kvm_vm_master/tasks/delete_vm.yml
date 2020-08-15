@@ -13,14 +13,14 @@
 - name: List existing VMs
   command: "virsh list --all"
   become: true
-  register: vms_on_kvm
+  register: kvm_vms
 
 - name: Delete if VM exists
   block:
-    # # Check vm state 
-    # - name: Check vm state
-    #   shell: virsh dominfo test_vm2 | grep State
-    #   register: vm_state
+    # Check vm state 
+    - name: Check vm state
+      shell: virsh dominfo {{vm_item.name}} | grep State
+      register: vm_state
 
     - name: Destry VM if it's not "shut off"
       block:
@@ -29,12 +29,12 @@
         - name: Destroy Virtual Machine 
           shell: virsh destroy {{vm_item.name}}
       
-      when: vms_on_kvm.stdout | regex_search( "running" ) #'vm_state is not search("shut off")'
+      when: not (vm_state.stdout | regex_search("shut off"))
 
     # Undefine Virtual Machine 
     - name: Undefine Virtual Machine 
       shell: virsh undefine {{vm_item.name}} --remove-all-storage      
 
-  when: vms_on_kvm.stdout | regex_search(vm_item.name)
+  when: kvm_vms.stdout | regex_search(vm_item.name)
 
 

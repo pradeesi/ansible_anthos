@@ -18,22 +18,21 @@ vcenter:
   subnet_prefix: 24
   gateway: 192.168.2.1
   system_name: 192.168.2.5
-  os_password: C!sc0123
-  sso_password: C!sc0123
+  os_password: P@ssw0rd
+  sso_password: P@ssw0rd
   sso_domain_name: vsphere.local
   sso_site_name: mysite
   esxi_host:
     kvm_vm_name: esxi1
     hostname: 192.168.2.6
-#    http_port: 80
     username: root
-    password: cisco123
+    password: P@ssw0rd
     deployment_network: VM Network
     datastore: datastore1
   vcenter_config:
     datacenter_name: Datacenter
     esxi_cluster:
-      cluster_name: New cluster
+      cluster_name: Cluster
       enable_drs: false
       enable_ha: false
       enable_vsan: false
@@ -44,7 +43,7 @@ vcenter:
     distributed_virtual_switch:
       dvs_name: DSwitch
       version: 6.0.0
-      port_group_name: anthos
+      port_group_name: Anthos-PG
       port_group_vlan_id: 0
       esxi_hosts:
         - kvm_vm_name: esxi1

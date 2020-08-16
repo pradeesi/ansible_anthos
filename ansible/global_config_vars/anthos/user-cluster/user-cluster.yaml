@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: UserCluster
 # (Required) A unique name for this cluster
-name: "anthos-user-cluster"
+name: "on-prem-cluster"
 # (Required) GKE on-prem version (example: 1.3.0-gke.16)
 gkeOnPremVersion: 1.4.1-gke.1
 # # (Optional) vCenter configuration (default: inherit from the admin cluster)
@@ -25,10 +25,10 @@ network:
     ipBlockFilePath: "/home/ubuntu/user-hostconfig.yaml"
   # (Required) The Kubernetes service CIDR range for the cluster. Must not overlap
   # with the pod CIDR range
-  serviceCIDR: 10.10.0.0/16
+  serviceCIDR: 10.30.0.0/16
   # (Required) The Kubernetes pod CIDR range for the cluster. Must not overlap with
   # the service CIDR range
-  podCIDR: 10.20.0.0/16 
+  podCIDR: 10.40.0.0/16 
   vCenter:
     # vSphere network name
     networkName: VM Network
@@ -67,16 +67,16 @@ loadBalancer:
   seesaw:
     # (Required) The absolute or relative path to the yaml file to use for IP allocation
     # for LB VMs. Must contain one or two IPs.
-    ipBlockFilePath: "/home/ubuntu/user-seesaw-hostconfig.yaml"
+    ipBlockFilePath: "user-seesaw-hostconfig.yaml"
     # (Required) The Virtual Router IDentifier of VRRP for the Seesaw group. Must
     # be between 1-255 and unique in a VLAN.
     vrid: 2 
     # (Required) The IP announced by the master of Seesaw group
     masterIP: "192.168.2.28"
     # (Required) The number CPUs per machine
-    cpus: 4
+    cpus: 2
     # (Required) Memory size in MB per machine
-    memoryMB: 8192
+    memoryMB: 4096
     # (Optional) Network that the LB interface of Seesaw runs in (default: cluster
     # network)
     vCenter:
@@ -88,7 +88,7 @@ loadBalancer:
 # 4 CPUs; 16384 MB memory; 1 replica)
 masterNode:
   cpus: 4
-  memoryMB: 8192
+  memoryMB: 6144
   # How many machines of this type to deploy
   replicas: 1
 # (Required) List of node pools. The total un-tainted replicas across all node pools
@@ -103,13 +103,13 @@ nodePools:
   #   value: ""
   #   effect: ""
   cpus: 4
-  memoryMB: 8192
+  memoryMB: 6144
   # How many machines of this type to deploy
   replicas: 3
 # Spread nodes across at least three physical hosts (requires at least three hosts)
 antiAffinityGroups:
   # Set to false to disable DRS rule creation
-  enabled: true
+  enabled: false
 # # (Optional): Configure additional authentication
 # authentication:
 #   # (Optional) Configure OIDC authentication

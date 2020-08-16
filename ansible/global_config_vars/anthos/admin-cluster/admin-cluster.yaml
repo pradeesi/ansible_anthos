@@ -28,7 +28,7 @@ network:
     ipBlockFilePath: "/home/ubuntu/admin-hostconfig.yaml"
   # (Required) The Kubernetes service CIDR range for the cluster. Must not overlap
   # with the pod CIDR range
-  serviceCIDR: 10.96.232.0/24
+  serviceCIDR: 10.10.0.0/16
   # (Required) The Kubernetes pod CIDR range for the cluster. Must not overlap with
   # the service CIDR range
   podCIDR: 10.20.0.0/16
@@ -78,9 +78,9 @@ loadBalancer:
     # (Required) The IP announced by the master of Seesaw group
     masterIP: "192.168.2.24"
     # (Required) The number CPUs per machine
-    cpus: 4
+    cpus: 2
     # (Required) Memory size in MB per machine
-    memoryMB: 8192
+    memoryMB: 4096
     # (Optional) Network that the LB interface of Seesaw runs in (default: cluster
     # network)
     vCenter:

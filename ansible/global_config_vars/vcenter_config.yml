@@ -39,7 +39,6 @@ vcenter:
       esxi_hosts:     
         - kvm_vm_name: esxi1
         - kvm_vm_name: esxi2
-        - kvm_vm_name: esxi3
     distributed_virtual_switch:
       dvs_name: DSwitch
       version: 6.0.0
@@ -50,8 +49,7 @@ vcenter:
           vmnic: vmnic1
         - kvm_vm_name: esxi2
           vmnic: vmnic1
-        - kvm_vm_name: esxi3
-          vmnic: vmnic1
+
 
 
 

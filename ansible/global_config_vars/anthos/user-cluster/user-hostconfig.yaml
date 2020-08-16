@@ -10,11 +10,11 @@ hostconfig:
   - "my.local.com"
 blocks:
   - netmask: 255.255.252.0
-    gateway: 172.16.23.254
+    gateway: 192.168.2.1
     ips:
     - ip: 192.168.2.41
       hostname: user-host1
-    - ip: 172.16.20.42
+    - ip: 192.168.2.42
       hostname: user-host2
-    - ip: 172.16.20.43
+    - ip: 192.168.2.43
       hostname: user-host3

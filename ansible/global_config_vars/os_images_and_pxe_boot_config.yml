@@ -46,9 +46,9 @@ centos7_ks_file_folder: centos/centos7/centos7_ks
 
 # CentOS 8 ISO and Kickstart Config
 #--------------------------------------
-enable_centos8_pxe_installation: true
+enable_centos8_pxe_installation: false
 # Path on Ansible Host (Local)
-copy_centos8_iso: true
+copy_centos8_iso: false
 centos8_iso_image_source_path: os_images/centos/centos8/CentOS-8.2.2004-x86_64-minimal.iso
 # Paths on KVM Host (Remote)
 centos8_iso_image_path: /root/CentOS-8.2.2004-x86_64-minimal.iso
@@ -81,9 +81,9 @@ vcenter6_5_ks_file_folder: vmware/vsphere6.5/vcsa_ks_file
 
 # vmware ESXi 6.7 ISO and Kickstart Config
 #--------------------------------------
-enable_esxi6_7_pxe_installation: true
+enable_esxi6_7_pxe_installation: false
 # Path on Ansible Host (Local)
-copy_esxi6_7_iso: true
+copy_esxi6_7_iso: false
 esxi6_7_iso_image_source_path: os_images/vmware/vmware_6_7/VMware-VMvisor-Installer-201912001-15160138.x86_64.iso
 # Paths on KVM Host (Remote)
 esxi6_7_iso_image_path: /root/VMware-VMvisor-Installer-201912001-15160138.x86_64.iso
@@ -94,7 +94,7 @@ esxi6_7_ks_file_folder: vmware/vsphere6_7/esxi_ks_file
 # vmware vCenter Server 6.7 ISO and Kickstart Config
 #--------------------------------------
 # Path on Ansible Host (Local)
-copy_vcenter6_7_iso: true
+copy_vcenter6_7_iso: false
 vcenter6_7_iso_image_source_path: os_images/vmware/vmware_6_7/VMware-VCSA-all-6.7.0-16046470.iso
 # Paths on KVM Host (Remote)
 vcenter6_7_iso_image_path: /root/VMware-VCSA-all-6.7.0-16046470.iso

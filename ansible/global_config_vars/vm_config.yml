@@ -37,8 +37,8 @@ kvm_virtual_machines:
       - name: esxi2
         action: create
         installation_mode: pxe
-        ram: 20480
-        vcpus: 8
+        ram: 30720
+        vcpus: 6
         disk_size: 990
         os_type: linux
         os_variant: virtio26
@@ -57,7 +57,7 @@ kvm_virtual_machines:
           dns_server: 192.168.2.1
 
       - name: esxi3
-        action: create
+        action: delete
         installation_mode: pxe
         ram: 20480
         vcpus: 8
@@ -79,7 +79,7 @@ kvm_virtual_machines:
           dns_server: 192.168.2.1      
 
       - name: gcloud_sdk_vm
-        action: create
+        action: delete
         installation_mode: pxe
         ram: 4096
         vcpus: 4

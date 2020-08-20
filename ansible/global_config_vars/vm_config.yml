@@ -15,9 +15,9 @@ kvm_virtual_machines:
       - name: esxi1
         action: create
         installation_mode: pxe
-        ram: 20480
-        vcpus: 8
-        disk_size: 500
+        ram: 12288
+        vcpus: 6
+        disk_size: 200
         os_type: linux
         os_variant: virtio26
         netwrok_connections:
@@ -37,8 +37,8 @@ kvm_virtual_machines:
       - name: esxi2
         action: create
         installation_mode: pxe
-        ram: 30720
-        vcpus: 6
+        ram: 51200
+        vcpus: 12
         disk_size: 990
         os_type: linux
         os_variant: virtio26

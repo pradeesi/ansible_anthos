@@ -87,7 +87,7 @@
     - name: Install Vmware vCenter Server Appliance
       include_role:
         name: vcenter_master
-      vars:
-        wait_before_starting_provisioning: 480 # Adjust this value (Time in seconds). Wait for ESXi VM to be provisioned.
+    #   vars:
+    #     wait_before_starting_provisioning: 480 # Adjust this value (Time in seconds). Wait for ESXi VM to be provisioned.
 # ------------------------------
 

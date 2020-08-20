@@ -9,8 +9,6 @@ install --firstdisk --overwritevmfs
 network --bootproto=static --ip={{vm_config.pxe_boot_config.ip_addr}} --netmask={{vm_config.pxe_boot_config.net_mask}} --gateway={{vm_config.pxe_boot_config.gateway}} --vlanid=0  --nameserver={{vm_config.pxe_boot_config.dns_server}} --hostname={{vm_config.pxe_boot_config.host_name}}
 
 
-#we poweroff ourselves in the 'post' section, and ucs will later power us on after changing the service profile
-
 #reboot
 
 %pre --interpreter=busybox

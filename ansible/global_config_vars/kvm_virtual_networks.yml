@@ -9,6 +9,12 @@
 # ------------------------------------------
 
 
+# ------------------------------------------
+# IMPORTANT NOTE: For each new server update the "forwarding_host_device" otherwise you won't be able to access the VMs. 
+# You may also need to update the subnets according to your network setup.
+# ------------------------------------------
+
+
 kvm_networks:
   - kvm_host: 192.168.1.114
     virtual_networks:
@@ -16,7 +22,7 @@ kvm_networks:
       - network_name: pxe-network
         action: create
         mode: route
-        forwarding_host_device: enp0s20f0u2     # Use ifconfig or ip addr command to find the physical interface on KVM host
+        forwarding_host_device: enp0s20f0u3     # Use ifconfig or ip addr command to find the physical interface on KVM host
         bridge_name: virbr1
         ip_address: 192.168.2.1
         net_mask: 255.255.255.0
@@ -28,7 +34,7 @@ kvm_networks:
       - network_name: anthos-kvm-nw
         action: create
         mode: route
-        forwarding_host_device: enp0s20f0u2     # Use ifconfig or ip addr command to find the physical interface on KVM host
+        forwarding_host_device: enp0s20f0u3     # Use ifconfig or ip addr command to find the physical interface on KVM host
         bridge_name: virbr2
         ip_address: 172.16.1.1
         net_mask: 255.255.255.0

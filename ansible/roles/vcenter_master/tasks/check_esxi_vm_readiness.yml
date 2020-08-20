@@ -60,8 +60,15 @@
     host: "{{esxi_host_ip}}"
     port: "80"
     delay: 1
-    timeout: 3600     # Host provisioning may take time.
+    timeout: 300     # Host provisioning may take time.
     state: started
+  register: esxi_readiness_status
+  ignore_errors: True
+
+# Initiate Recursion, if the previous activity failed.
+- name: Recursion - Check ESXi host readiness on KVM once again...
+  include_tasks: check_esxi_vm_readiness.yml
+  when: esxi_readiness_status.failed
 
 - name: sleep for 10 seconds and continue with play
   wait_for:

@@ -1,0 +1,39 @@
+---
+# ------------------------------------------
+# file: roles/kvm_master/tasks/kvm_networks/validate_forwarding_host_device.yml
+# ver: 1.0
+# ansible ver: 2.7.8
+# python ver: 2.7.15
+# author: Pradeep Singh
+# description: This task will validate if the value provided for the 'forwarding_host_device' is correct
+# ------------------------------------------
+
+- name: Get all the network interfaces 
+  shell: ip link show | grep mode | sed 's/://g' | awk '{print $2}'
+  register: host_network_interfaces
+
+- name: List of available Network Interfaces on the KVM host.
+  debug:
+    msg: "{{ host_network_interfaces.stdout }}"
+
+- name: If the 'forwarding_host_device' is available on this host
+  block:
+
+    - name: Get the list of functional network interfaces
+      shell: ip link show | grep "state UP" | sed 's/://g' | awk '{print $2}'
+      register: up_interfaces
+
+    - name: Fail if the 'forwarding_host_device' isn't UP and functional
+      fail:
+        msg: "'forwarding_host_device' - {{virtual_networks_item.forwarding_host_device}} is DOWN. Please set the correct value in 'kvm_virtual_networks.yml' file."
+      when: 
+        - not (up_interfaces.stdout | regex_search( virtual_networks_item.forwarding_host_device ))
+
+  when:
+    - (host_network_interfaces.stdout | regex_search( virtual_networks_item.forwarding_host_device ))
+
+- name: Fail if the 'forwarding_host_device' isn't available on KVM Host
+  fail:
+    msg: "Invalid 'forwarding_host_device' - {{virtual_networks_item.forwarding_host_device}}. Please set the correct value in 'kvm_virtual_networks.yml' file."
+  when: 
+    - not (host_network_interfaces.stdout | regex_search( virtual_networks_item.forwarding_host_device ))

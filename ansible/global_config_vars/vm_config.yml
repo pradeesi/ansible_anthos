@@ -38,7 +38,7 @@ kvm_virtual_machines:
         action: create
         installation_mode: pxe
         ram: 51200
-        vcpus: 12
+        vcpus: 8
         disk_size: 990
         os_type: linux
         os_variant: virtio26

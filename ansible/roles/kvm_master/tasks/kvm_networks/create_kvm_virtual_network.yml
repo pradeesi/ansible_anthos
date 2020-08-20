@@ -37,6 +37,12 @@
 - name: Create kvm network if it doesn't exist
   block:
 
+    # Validate 'forwarding_host_device' value
+    - name: Include validate_forwarding_host_device task
+      include_tasks: kvm_networks/validate_forwarding_host_device.yml
+      when:
+        - virtual_networks_item.forwarding_host_device is defined
+
     # Create kvm network
     - name: Create kvm virtual network - {{virtual_networks_item.network_name}}
       virt_net:
